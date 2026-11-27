@@ -15,7 +15,7 @@ export const SERVICES = [
 // Le salon (un seul). Son compte admin = cet e-mail + le mot de passe créé dans Firebase > Authentication.
 // ⚠️ À COMPLÉTER : l'adresse (laisse '' pour cacher la section « Nous trouver ») et l'e-mail du compte salon.
 export const SHOPS = [
-  { id: 's1', name: 'The Wizard Barber', addr: '', email: 'EMAIL-SALON@exemple.com' }
+  { id: 's1', name: 'The Wizard Barber', addr: '', email: 'bgcoucou25@gmail.com' }
 ];
 
 // Téléphone du salon affiché sur le site (laisse '' pour ne rien afficher)
@@ -23,7 +23,7 @@ export const PHONE = '';
 
 // Compte « gestion » (Firebase > Authentication) : son mot de passe est demandé pour ajouter, modifier ou supprimer un coiffeur.
 // ⚠️ Utilise une VRAIE adresse e-mail (sinon impossible de changer le mot de passe plus tard).
-export const MANAGER_EMAIL = 'EMAIL-GESTION@exemple.com';
+export const MANAGER_EMAIL = 'bgcoucou001@gmail.com';
 
 export const OPEN_HOUR = 9;      // ouverture : 9h00   ⚠️ à vérifier
 export const CLOSE_HOUR = 19;    // fermeture : 19h00 (dernier créneau 18h30)   ⚠️ à vérifier

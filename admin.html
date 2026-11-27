@@ -8,14 +8,14 @@
 <link rel="apple-touch-icon" href="favicon.png">
 <title>The Wizard · Agenda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600&family=Alfa+Slab+One&family=Josefin+Sans:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* VOICE: a working tool for the barber, fast to read between two clients.
    IDEA: the shop's paper appointment book, one column per day, one line per half hour.
    PICTURE: the week agenda itself, coloured blocks by service, status marks on top.
    COLOUR and TYPE: logo black bar, white page, logo red for "now"; Oswald titles + Inter.
    LAYOUT: black top bar, stats row, legend, agenda full width; day view on phones. */
-:root{color-scheme:light;--bg:#f4f5fa;--card:#fff;--ink:#161a2e;--mute:#666d85;--line:#e3e5ee;--red:#4a2fa3;--green:#16a34a;--black:#0f1733;--acc:#f2c14e}
+:root{color-scheme:light;--bg:#eef3f7;--card:#fff;--ink:#1b2842;--mute:#5f6b7e;--line:#dbe3ea;--red:#1b2842;--green:#16a34a;--black:#1b2842;--acc:#1b2842}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
@@ -24,27 +24,27 @@ button,input,select,textarea{font:inherit}
 :focus-visible{outline:3px solid var(--red);outline-offset:2px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn:hover{border-color:#bbb}
-.btn.red{background:var(--red);border-color:var(--red);color:#fff}.btn.red:hover{background:#3b2483}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}.btn.red:hover{background:#2c3f63}
 .btn.dark{background:#1d1d1d;border-color:#333;color:#fff}.btn.dark:hover{background:#2a2a2a}
 .btn.icon{width:44px;padding:0;font-size:22px}
 /* login */
-#login{min-height:100vh;display:grid;place-items:center;background:radial-gradient(55% 50% at 50% 0%,rgba(242,193,78,.16),transparent 70%),linear-gradient(160deg,#0f1a33,#24195a 55%,#3b2483);padding:24px}
-.lcard{width:min(380px,100%);text-align:center;color:#fff}
+#login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(180deg,#d4e1eb,#c4d5e2);padding:24px}
+.lcard{width:min(380px,100%);text-align:center;color:#1b2842}
 .lcard .llogo{width:min(300px,80vw);height:auto;display:block;margin:0 auto 8px}
 .lcard h1{font-size:30px;margin:6px 0 20px}
-.lcard input{width:100%;min-height:48px;border-radius:8px;border:1px solid #3a4475;background:rgba(11,18,38,.6);color:#fff;padding:0 14px;font-size:16px;margin-bottom:10px}
+.lcard input{width:100%;min-height:48px;border-radius:8px;border:1px solid #a8bccc;background:#fff;color:#1b2842;padding:0 14px;font-size:16px;margin-bottom:10px}
 .lcard .btn{width:100%}
-.lerr{color:#ff6b6e;min-height:22px;margin-top:10px;font-size:14px}
-.lcard a{color:#aaa;font-size:14px}
-.shopTag{font-size:14px;color:#bbb;margin-right:auto}
+.lerr{color:#b3191d;min-height:22px;margin-top:10px;font-size:14px}
+.lcard a{color:#46566e;font-size:14px}
+.shopTag{font-size:14px;color:#46566e;margin-right:auto}
 /* app */
 #app{display:none}#app.on{display:block}
-.top{background:linear-gradient(90deg,#0f1a33,#24195a);color:#fff;position:sticky;top:0;z-index:10}
-.top .tlogo{height:38px;width:auto}
+.top{background:#c4d5e2;color:#1b2842;position:sticky;top:0;z-index:10;border-bottom:1px solid #aec2d2}
+.top .tlogo{height:40px;width:auto;display:block}
 .topin{max-width:1500px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px max(2vw,12px)}
 .top img{width:44px;height:44px}
 .top h1{font-size:22px}
-.top .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.top .btn{background:#fff;border-color:#aec2d2;color:#1b2842}
 .wrap{max-width:1500px;margin:0 auto;padding:16px max(2vw,12px) 40px}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
 .period{font-family:Oswald,sans-serif;font-size:clamp(20px,2.6vw,28px);font-weight:600;margin-right:auto;white-space:nowrap}
@@ -69,22 +69,22 @@ img.av{object-fit:cover}
 .leaveadd{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .leaveadd input{flex:1 1 130px;width:auto}.leaveadd span{color:var(--mute)}
 .team .tools button.edit{color:#2f6fe4}
-.team .tools button.svc{color:#4a2fa3;border-style:solid;border-color:#cfc5f2;background:#f6f3ff}
-.team .tools button.imp{color:#fff;background:#4a2fa3;border:0}
+.team .tools button.svc{color:#1b2842;border-style:solid;border-color:#aec2d2;background:#eef3f7}
+.team .tools button.imp{color:#fff;background:#1b2842;border:0}
 .svlist{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:6px;max-height:42vh;overflow:auto}
 .svlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px}
 .svlist li b{font-size:14px}.svlist li small{color:var(--mute);font-size:12px;grid-column:1}
 .svlist li .acts{grid-row:1/span 2;grid-column:2;display:flex;gap:4px}
 .svlist li .acts button{min-height:34px;min-width:34px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;padding:0 8px}
 .svlist li .acts button.rm{color:#b3191d}
-.svlist li.editing{border-color:#4a2fa3;background:#f6f3ff}
+.svlist li.editing{border-color:#1b2842;background:#eef3f7}
 .svlist li.empty{display:block;border:0;color:var(--mute);padding:0}
-.svform{border:1px dashed #cfc5f2;border-radius:12px;padding:4px 12px 12px;margin-top:6px}
+.svform{border:1px dashed #aec2d2;border-radius:12px;padding:4px 12px 12px;margin-top:6px}
 .svform .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 .team button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;border:1px solid var(--line);border-radius:999px;background:#fff;font-weight:600;cursor:pointer;color:var(--ink)}
 .team button .av{width:32px;height:32px;border-radius:50%;background:#161616;color:#fff;display:grid;place-items:center;font:600 14px Oswald,sans-serif}
 .team button small{font-weight:500;color:var(--mute)}
-.team button.on{background:#0f1733;color:#fff;border-color:#0f1733}.team button.on .av{background:var(--red)}.team button.on small{color:#ccc}
+.team button.on{background:#1b2842;color:#fff;border-color:#1b2842}.team button.on .av{background:#fff;color:#1b2842}.team button.on small{color:#ccc}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
 .seg button{min-height:42px;padding:0 14px;border:0;background:none;font-weight:600;cursor:pointer;color:var(--mute)}
 .seg button.on{background:#161616;color:#fff}
@@ -102,10 +102,16 @@ img.av{object-fit:cover}
 .ch b{display:block;text-transform:capitalize}.ch span{color:var(--mute);font-size:13px}
 .ch.today{color:var(--red);border-bottom-color:var(--red)}
 .ch em{display:block;font-style:normal;font-size:12px;color:var(--mute)}
-.tm{font-size:12px;color:var(--mute);text-align:right;padding:2px 8px 0 0;border-right:1px solid var(--line);white-space:nowrap}
-.tm.h{color:var(--ink);font-weight:600}
-.cell{height:38px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:3px;position:relative}
-.cell.hour{border-bottom-style:dashed}
+.tcol{border-right:1px solid var(--line)}
+.tl{height:40px;font-size:12px;color:var(--mute);text-align:right;padding-right:8px;white-space:nowrap;line-height:1;transform:translateY(-6px)}
+.tl:first-child{transform:none;padding-top:3px}
+.tl.h{color:var(--ink);font-weight:600}
+.col{position:relative;border-right:1px solid var(--line);min-height:var(--h)}
+.col.todaycol{background:#fbfaff}
+.nowline{position:absolute;left:0;right:0;height:2px;background:#e0262b;z-index:3;pointer-events:none}
+.nowline::before{content:"";position:absolute;left:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:#e0262b}
+.cell{height:40px;border-top:1px dashed #eceef4;position:relative}
+.cell.hr{border-top:1px solid var(--line)}
 .cell.free{cursor:pointer}.cell.free:hover{background:#fafaf9}
 .cell.free:hover::after{content:"+";position:absolute;inset:0;display:grid;place-items:center;color:#bbb;font-size:22px}
 .cell.past{background:#fafaf9}
@@ -113,7 +119,7 @@ img.av{object-fit:cover}
 .cell.now{box-shadow:inset 0 2px 0 var(--red)}
 .cell.shut{background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);cursor:default}
 .ev{width:100%;height:100%;border:0;border-left:4px solid var(--c);border-radius:6px;background:color-mix(in srgb,var(--c) 15%,#fff);color:var(--ink);text-align:left;padding:4px 8px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
-.ev{padding:2px 8px!important}.ev b{font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev{position:absolute;left:3px;right:3px;width:auto!important;height:auto;z-index:2;justify-content:flex-start!important;padding:3px 8px!important;box-shadow:0 1px 2px rgba(0,0,0,.06)}.ev.tiny{flex-direction:row!important;align-items:center;gap:6px;padding:0 6px!important}.ev.tiny small{display:none}.ev b{font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev small{font-size:11px;line-height:1.2;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev:hover{background:color-mix(in srgb,var(--c) 25%,#fff)}
 .ev.done{background:#effaf2;border-left-color:var(--green)}
@@ -123,7 +129,7 @@ img.av{object-fit:cover}
 .ev.cont{border-top-left-radius:0;border-top-right-radius:0;margin-top:-4px;height:calc(100% + 4px)}
 .ev.block{background:repeating-linear-gradient(45deg,#ececec 0 6px,#f6f6f6 6px 12px);border-left-color:#777;color:#555}
 .ev.past:not(.done):not(.absent):not(.block){opacity:.75}
-.closedcol{grid-row:span var(--rows);display:grid;place-items:center;color:var(--mute);background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);border-right:1px solid var(--line)}
+.closedcol{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);border-right:1px solid var(--line)}
 /* dialogs */
 dialog{border:0;border-radius:14px;padding:0;width:min(460px,94vw);color:var(--ink);max-height:92vh;overflow:auto}
 dialog::backdrop{background:rgba(0,0,0,.55)}
@@ -152,23 +158,7 @@ textarea{min-height:70px;resize:vertical}
 
 <section id="login">
   <form class="lcard" id="lform">
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="sc" viewBox="-12 -8 24 16">
-    <g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="-7" cy="-3.6" r="3"/><circle cx="-7" cy="3.6" r="3"/></g>
-    <path d="M-4.4 -2.4 L11 3.4 L10 4.6 Z M-4.4 2.4 L11 -3.4 L10 -4.6 Z" fill="currentColor"/>
-  </symbol>
-  <symbol id="logo" viewBox="0 0 520 150">
-    <text x="260" y="88" text-anchor="middle" font-family="'Alfa Slab One',Rockwell,Georgia,serif" font-size="92" textLength="440" lengthAdjust="spacingAndGlyphs" transform="translate(260 88) scale(1 1.12) translate(-260 -88)" fill="#fff">THE WIZARD</text>
-    <g style="color:var(--acc)">
-      <line x1="60" y1="125" x2="118" y2="125" stroke="currentColor" stroke-width="2.5"/>
-      <use href="#sc" x="116" y="115" width="28" height="20"/>
-      <line x1="402" y1="125" x2="460" y2="125" stroke="currentColor" stroke-width="2.5"/>
-      <use href="#sc" x="376" y="115" width="28" height="20" transform="rotate(180 390 125)"/>
-    </g>
-    <text x="260" y="137" text-anchor="middle" font-family="'Josefin Sans',Inter,sans-serif" font-size="32" letter-spacing="8" fill="#fff">BARBER</text>
-  </symbol>
-</svg>
-    <svg class="llogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <img class="llogo" src="logo-wizard.png" alt="The Wizard Barber" width="1068" height="300">
     <h1>Espace salon</h1>
     <input id="lmail" type="email" autocomplete="username" hidden>
     <input id="lpass" type="password" placeholder="Mot de passe" autocomplete="current-password" required aria-label="Mot de passe">
@@ -180,7 +170,7 @@ textarea{min-height:70px;resize:vertical}
 
 <div id="app">
   <header class="top"><div class="topin">
-    <svg class="tlogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <img class="tlogo" src="logo-wizard.png" alt="The Wizard Barber" width="1068" height="300">
     <h1>Agenda</h1><span class="shopTag" id="shopTag"></span>
     <button class="btn icon" id="prev" aria-label="Précédent">‹</button>
     <button class="btn" id="todayBtn">Aujourd'hui</button>
@@ -222,9 +212,9 @@ textarea{min-height:70px;resize:vertical}
   <div class="dh"><h3>Créneau libre</h3><p id="awhen"></p></div>
   <div class="db">
     <div class="tabs"><button type="button" class="btn on" data-tab="rdv">Ajouter un RDV</button><button type="button" class="btn" data-tab="block">Bloquer</button></div>
+    <label for="adate">Date et heure</label>
+    <div style="display:flex;gap:8px"><input id="adate" type="date" required><select id="atime"></select></div>
     <div id="tabRdv">
-      <label for="adate">Date et heure</label>
-      <div style="display:flex;gap:8px"><input id="adate" type="date" required><select id="atime"></select></div>
       <label for="aname">Nom du client</label>
       <input id="aname" maxlength="60" required>
       <label for="aphone">Téléphone</label>
@@ -238,10 +228,12 @@ textarea{min-height:70px;resize:vertical}
     </div>
     <div id="tabBlock" hidden>
       <p style="margin:12px 0 0;color:var(--mute)">Un créneau bloqué n'apparaît plus comme libre sur le site (pause, rendez-vous perso, congé…).</p>
+      <label for="abdur">Durée à bloquer (à partir de l'heure choisie)</label>
+      <select id="abdur"><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">1 h</option><option value="90">1 h 30</option><option value="120">2 h</option><option value="180">3 h</option><option value="240">4 h</option></select>
     </div>
     <div class="err" id="aerr"></div>
     <div class="row" id="rowRdv"><button type="button" class="btn" id="aclose">Annuler</button><button class="btn red" id="asave">Ajouter</button></div>
-    <div class="row" id="rowBlock" hidden><button type="button" class="btn" id="ablock1">Bloquer ce créneau</button><button type="button" class="btn dark" id="ablockday">Bloquer toute la journée</button></div>
+    <div class="row" id="rowBlock" hidden><button type="button" class="btn" id="ablock1">Bloquer cette durée</button><button type="button" class="btn dark" id="ablockday">Bloquer toute la journée</button></div>
   </div>
 </form></dialog>
 
@@ -287,7 +279,7 @@ textarea{min-height:70px;resize:vertical}
 
 <!-- Prestations d'un coiffeur -->
 <dialog id="sdlg"><form id="sform">
-  <div class="dh" style="--c:#4a2fa3"><h3>Prestations</h3><p>Ce que le coiffeur propose sur le site, avec ses prix et ses durées.</p></div>
+  <div class="dh" style="--c:#1b2842"><h3>Prestations</h3><p>Ce que le coiffeur propose sur le site, avec ses prix et ses durées.</p></div>
   <div class="db">
     <label for="swho">Coiffeur</label>
     <select id="swho"></select>
@@ -314,7 +306,7 @@ textarea{min-height:70px;resize:vertical}
 
 <!-- Importer l'équipe de départ -->
 <dialog id="idlg"><form id="iform">
-  <div class="dh" style="--c:#4a2fa3"><h3>Importer l'équipe</h3><p id="iwho"></p></div>
+  <div class="dh" style="--c:#1b2842"><h3>Importer l'équipe</h3><p id="iwho"></p></div>
   <div class="db">
     <p style="margin:0 0 8px">Les coiffeurs et toutes leurs prestations (titres, descriptions, prix, durées) seront ajoutés au site. Tu pourras ensuite tout modifier depuis l'admin.</p>
     <label for="ipass">Mot de passe gestion <span class="danger">*</span></label>
@@ -503,7 +495,7 @@ function render(){
   const todayCount=list.filter(b=>b.d===todayIso).length;
   $('stats').innerHTML=
     '<div class="stat"><span>Rendez-vous '+(view==='day'?'ce jour':'cette semaine')+'</span><b>'+list.length+'</b><small>'+pl(list.filter(b=>b.status==='done').length,'venu')+' · '+pl(list.filter(b=>b.status==='absent').length,'absent')+'</small></div>'+
-    '<div class="stat"><span>Remplissage</span><b>'+Math.min(100,fill)+' %</b><small>'+blocked+' créneau'+(blocked>1?'x':'')+' bloqué'+(blocked>1?'s':'')+'</small></div>'+
+    '<div class="stat"><span>Remplissage</span><b>'+Math.min(100,fill)+' %</b><small>'+(blocked?dur(blocked*STEP)+' bloqué'+'':'aucun blocage')+'</small></div>'+
     '<div class="stat"><span>Chiffre estimé</span><b>'+euro(total)+'</b><small>sur la base des prix affichés</small></div>'+
     '<div class="stat"><span>Prochain client</span><b>'+(upcoming?esc(upcoming.t):'—')+'</b><small>'+(upcoming?esc(upcoming.name)+(upcoming.d!==todayIso?' · '+esc(longDate(upcoming.d)):''):(range().some(d=>iso(d)===todayIso)?todayCount+' RDV aujourd\'hui':'Aucun sur la période'))+'</small></div>';
   // légende
@@ -518,25 +510,42 @@ function render(){
       ?'<div class="ch'+(k===todayIso?' today':'')+'"><b>'+esc(c.b.name)+'</b><span>'+DAYS[c.d.getDay()]+'</span><em>'+n+' RDV</em></div>'
       :'<div class="ch'+(k===todayIso?' today':'')+'"><b>'+DAYS[c.d.getDay()]+'</b><span>'+c.d.getDate()+' '+SHORT[c.d.getMonth()]+'</span><em>'+n+' RDV</em></div>';
   }
-  const closedDay=cols.map(c=>!works(c.b,c.d));
-  SLOTS.forEach((t,ri)=>{
-    const isHour=t.endsWith(':00');
-    h+='<div class="tm'+(isHour?' h':'')+'">'+(t.endsWith(':00')||t.endsWith(':30')?t:'')+'</div>';
-    cols.forEach((col,ci)=>{
-      const d=col.d,bid=col.b&&col.b.id;
-      if(closedDay[ci]){if(ri===0)h+='<div class="closedcol" style="--rows:'+SLOTS.length+';grid-row:span '+SLOTS.length+'">'+offLabel(col.b,d)+'</div>';return}
-      const k=iso(d),id=sid(k,t,bid);
-      const st=new Date(d);st.setHours(+t.slice(0,2),+t.slice(3));const en=new Date(st.getTime()+STEP*60000);
-      const past=en<=now,isNow=st<=now&&now<en;
-      let cls='cell'+(isHour?'':' hour')+(past?' past':'')+(k===todayIso&&!past?' todaycol':'')+(isNow?' now':'');
-      const b=bookings[id],s=slots[id],c=cont[id]&&bookings[cont[id]];
-      let inner='';
-      if(c&&!b){const v=svcOf(c);inner='<button class="ev cont'+(c.status==='done'?' done':c.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(c.id)+'"><small>↳ suite · '+esc(c.name)+'</small></button>'}
-      else if(b){const v=svcOf(b);inner='<button class="ev'+(b.status==='done'?' done':b.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(id)+'"><b>'+esc(b.name)+'</b><small>'+esc(v.n)+(b.phone?' · '+esc(b.phone):'')+'</small></button>'}
-      else if(s){inner='<button class="ev block" data-x="'+esc(id)+'"><b>Bloqué</b></button>'}
-      else if(!past){cls+=' free'}
-      h+='<div class="'+cls+'" data-d="'+k+'" data-t="'+t+'" data-bb="'+esc(bid||'')+'"'+(cls.includes('free')?' role="button" tabindex="0" aria-label="Créneau libre '+t+'"':'')+'>'+inner+'</div>';
-    });
+  /* corps : une colonne de temps + une colonne par jour ou par coiffeur.
+     Lignes de 15 min pour cliquer ; les RDV et les blocages sont posés par-dessus, à leur vraie durée (précision 5 min). */
+  const ROW=15,RH=40,PPM=RH/ROW,T0=OPEN_HOUR*60,ROWS=(CLOSE_HOUR-OPEN_HOUR)*60/ROW;
+  const mins=t=>+t.slice(0,2)*60+ +t.slice(3);
+  const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+  cal.style.setProperty('--h',(ROWS*RH)+'px');
+  h+='<div class="tcol">';
+  for(let r=0;r<ROWS;r++){const t=hhmm(T0+r*ROW);h+='<div class="tl'+(t.endsWith(':00')?' h':'')+'">'+(t.endsWith(':00')||t.endsWith(':30')?t:'')+'</div>'}
+  h+='</div>';
+  cols.forEach(col=>{
+    const d=col.d,bid=col.b&&col.b.id,k=iso(d);
+    if(!works(col.b,d)){h+='<div class="col"><div class="closedcol">'+offLabel(col.b,d)+'</div></div>';return}
+    h+='<div class="col'+(k===todayIso?' todaycol':'')+'">';
+    for(let r=0;r<ROWS;r++){
+      const t=hhmm(T0+r*ROW),st=new Date(d);st.setHours(+t.slice(0,2),+t.slice(3));
+      const past=new Date(st.getTime()+ROW*60000)<=now;
+      h+='<div class="cell'+(t.endsWith(':00')?' hr':'')+(past?' past':' free')+'" data-d="'+k+'" data-t="'+t+'" data-bb="'+esc(bid||'')+'"'+(past?'':' role="button" tabindex="0" aria-label="Ajouter à '+t+'"')+'></div>';
+    }
+    // RDV de cette colonne
+    const mine=list.filter(b=>b.d===k&&(!bid||b.barber===bid));
+    const used=new Set();
+    for(const b of mine){
+      const v=svcOf(b),m0=mins(b.t),top=(m0-T0)*PPM,ht=Math.max(v.dur*PPM-2,16);
+      idsOf(b).forEach(x=>used.add(x));
+      const en=new Date(fromIso(k));en.setHours(0,m0+v.dur);
+      h+='<button class="ev'+(b.status==='done'?' done':b.status==='absent'?' absent':'')+(en<=now?' past':'')+(ht<34?' tiny':'')+'" style="--c:'+v.color+';top:'+top+'px;height:'+ht+'px" data-b="'+esc(b.id)+'">'+
+        '<b>'+esc(b.t)+' – '+esc(hhmm(m0+v.dur))+' · '+esc(b.name)+'</b><small>'+esc(v.n)+(b.phone?' · '+esc(b.phone):'')+'</small></button>';
+    }
+    // créneaux bloqués, regroupés en plages continues
+    const blk=Object.keys(slots).filter(x=>x.startsWith(k+'_')&&(slotB(x)||null)===(bid||null)&&!used.has(x)&&!bookings[x]).map(x=>({id:x,m:mins(slots[x].t)})).sort((a,b)=>a.m-b.m);
+    let run=null;const runs=[];
+    for(const x of blk){if(run&&x.m===run.end){run.ids.push(x.id);run.end+=STEP}else{run={start:x.m,end:x.m+STEP,ids:[x.id]};runs.push(run)}}
+    for(const r of runs)h+='<button class="ev block'+((r.end-r.start)*PPM<34?' tiny':'')+'" style="top:'+((r.start-T0)*PPM)+'px;height:'+Math.max((r.end-r.start)*PPM-2,10)+'px" data-x="'+esc(r.ids.join(','))+'"><b>Bloqué · '+hhmm(r.start)+' – '+hhmm(r.end)+'</b></button>';
+    // trait rouge « maintenant »
+    if(k===todayIso){const nm=now.getHours()*60+now.getMinutes();if(nm>=T0&&nm<=CLOSE_HOUR*60)h+='<div class="nowline" style="top:'+((nm-T0)*PPM)+'px"></div>'}
+    h+='</div>';
   });
   cal.innerHTML=h;
 }
@@ -586,9 +595,10 @@ $('dcancel').onclick=async()=>{
   finally{btn.disabled=false}
 };
 
-function openBlocked(id){current=id;const s=slots[id];$('bwhen').textContent=longDate(s.d)+' à '+s.t+(slotB(id)?' · '+barberName(slotB(id)):'');$('berr').textContent='';$('bdlg').showModal()}
+function openBlocked(list){current=list.split(',');const a=slots[current[0]],z=slots[current[current.length-1]];const zm=+z.t.slice(0,2)*60+ +z.t.slice(3)+STEP;
+  $('bwhen').textContent=longDate(a.d)+' de '+a.t+' à '+String(Math.floor(zm/60)).padStart(2,'0')+':'+String(zm%60).padStart(2,'0')+(slotB(current[0])?' · '+barberName(slotB(current[0])):'');$('berr').textContent='';$('bdlg').showModal()}
 $('bclose').onclick=()=>$('bdlg').close();
-$('bfree').onclick=async()=>{try{await deleteDoc(ref('slots',current));$('bdlg').close()}catch(_){$('berr').textContent='Impossible de débloquer, réessaie.'}};
+$('bfree').onclick=async()=>{try{const b=writeBatch(db);current.forEach(x=>b.delete(ref('slots',x)));await b.commit();$('bdlg').close()}catch(_){$('berr').textContent='Impossible de débloquer, réessaie.'}};
 
 /* ajouter / bloquer */
 /* prestations du coiffeur choisi dans le formulaire « + Rendez-vous » */
@@ -650,12 +660,12 @@ async function block(ids){
   if(!n){$('aerr').textContent='Rien à bloquer : tout est déjà pris.';return}
   try{await batch.commit();$('adlg').close()}catch(_){$('aerr').textContent='Le blocage a échoué, réessaie.'}
 }
-$('ablock1').onclick=()=>block([[newSlot.d,newSlot.t,newSlot.b]]);
+$('ablock1').onclick=()=>{const i0=SLOTS.indexOf($('atime').value||newSlot.t),n=Math.max(1,Math.round(+$('abdur').value/STEP));block(SLOTS.slice(Math.max(0,i0),Math.max(0,i0)+n).map(t=>[$('adate').value||newSlot.d,t,newSlot.b]))};
 $('ablockday').onclick=()=>{
   const btn=$('ablockday');if(!btn.dataset.armed){btn.dataset.armed='1';btn.textContent='Confirmer : bloquer la journée';return}
   delete btn.dataset.armed;btn.textContent='Bloquer toute la journée';
   const now=new Date();
-  block(SLOTS.filter(t=>{const st=fromIso(newSlot.d);st.setHours(+t.slice(0,2),+t.slice(3));return st>now}).map(t=>[newSlot.d,t,newSlot.b]));
+  const dd=$('adate').value||newSlot.d;block(SLOTS.filter(t=>{const st=fromIso(dd);st.setHours(+t.slice(0,2),+t.slice(3));return st>now}).map(t=>[dd,t,newSlot.b]));
 };
 /* ===== Gestion de l'équipe (protégée par le compte « gestion ») ===== */
 let mgr=null;

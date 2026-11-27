@@ -135,6 +135,7 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .mday.on{background:var(--cink);border-color:var(--cink);color:#fff}.mday.on small{color:#ccc}.mday.on em{color:#7ee2a0}
 .mtitle{font-weight:600;margin:2px 0 10px}.mtitle::first-letter{text-transform:uppercase}
 .mslots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mslots .s{min-height:42px}
 .mslots .s{min-height:46px}
 .mempty{color:var(--cmute);padding:18px 0;text-align:center}
 .legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-size:13px;color:var(--cmute)}
@@ -478,16 +479,13 @@ function candidates(k,i,n){
   if(barber==='any')return team().filter(b=>freeFor(b,k,i,n));
   return barber&&freeFor(barber,k,i,n)?[barber]:[];
 }
-/* horaires proposés un jour donné : seulement les libres (les pris ou bloqués disparaissent).
-   Précision 5 min : on propose chaque quart d'heure, plus l'horaire pile à la fin d'un RDV ou d'un blocage,
-   pour remplir les trous (ex. 18:20 si un RDV finit à 18:20). */
+/* horaires proposés un jour donné : tous les créneaux de 5 min où la prestation tient en entier,
+   pour chaque coiffeur (même ceux ajoutés plus tard). Les horaires pris ou bloqués disparaissent. */
 function freeTimes(d,k,n,now){
-  const out=[],bid=barber&&barber!=='any'?barber.id:null;
+  const out=[];
   SLOTS.forEach((t,idx)=>{
     const x=new Date(d);x.setHours(+t.slice(0,2),+t.slice(3));if(x<=now)return;
-    if(!candidates(k,idx,n).length)return;
-    const m=+t.slice(3),afterBusy=idx>0&&bid&&taken.has(sid(k,SLOTS[idx-1],bid));
-    if(m%15===0||afterBusy)out.push(t);
+    if(candidates(k,idx,n).length)out.push(t);
   });
   return out;
 }

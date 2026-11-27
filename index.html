@@ -81,6 +81,8 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .bjump a{flex:none;display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--cline);color:var(--cink);text-decoration:none;font-weight:600;font-size:14px;background:#fff}
 .bjump a:hover{border-color:var(--violet);color:var(--violet)}
 .svoff{color:var(--cmute);font-size:14px;margin:0}
+.more{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;padding:0 4px;border:0;background:none;color:var(--violet);font:600 15px Inter,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.more:hover{color:#2a1870}
 .sv{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:14px 14px 14px 18px;border:1px solid var(--cline);border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s}
 .sv:hover{border-color:#cfcfcf;box-shadow:0 6px 18px rgba(0,0,0,.06)}
 .sv .nm{font-weight:600;font-size:16px}
@@ -427,7 +429,9 @@ function fillSummaries(){
 }
 
 /* Étape 1 : prestations */
-/* prestations regroupées par coiffeur (« Avec Yoris », « Avec Sado »…), lues en direct dans la base */
+/* prestations regroupées par coiffeur (« Avec Yoris », « Avec Sado »…), lues en direct dans la base.
+   3 visibles par coiffeur, les autres derrière « Voir les N autres prestations ». */
+const SHOW=3,open=new Set();
 function drawServices(){
   const t=team();
   if(!t.length){$('svlist').innerHTML='<p class="hint">'+(db?'Les prestations arrivent bientôt.':'Réservation en ligne bientôt disponible.')+'</p>';$('bjump').innerHTML='';return}
@@ -435,11 +439,17 @@ function drawServices(){
   $('svlist').innerHTML=t.map(b=>{
     const list=(b.services||[]).filter(x=>x&&x.n);
     return '<section class="bgroup"><h3 id="bg-'+esc(b.id)+'">'+(photoOk(b.photo)?'<img class="av" alt="" src="'+b.photo+'">':'<span class="av">'+esc(String(b.name)[0]||'?')+'</span>')+'Avec '+esc(b.name)+'</h3>'+
-      (list.length?'<div class="rows">'+list.map((x,i)=>'<div class="sv"><span class="nm">'+esc(x.n)+'</span>'+(x.d?'<span class="ds">'+esc(x.d)+'</span>':'')+'<span class="meta"><span>'+esc(dur(+x.dur||30))+'</span>'+(price(x)?'·<b>'+esc(price(x))+'</b>':'')+'</span><button class="btn" data-b="'+esc(b.id)+'" data-i="'+i+'">Choisir</button></div>').join('')+'</div>'
+      (list.length?'<div class="rows">'+list.map((x,i)=>'<div class="sv"'+(i>=SHOW&&!open.has(b.id)?' hidden':'')+'><span class="nm">'+esc(x.n)+'</span>'+(x.d?'<span class="ds">'+esc(x.d)+'</span>':'')+'<span class="meta"><span>'+esc(dur(+x.dur||30))+'</span>'+(price(x)?'·<b>'+esc(price(x))+'</b>':'')+'</span><button class="btn" data-b="'+esc(b.id)+'" data-i="'+i+'">Choisir</button></div>').join('')+'</div>'+
+        (list.length>SHOW?'<button type="button" class="more" data-more="'+esc(b.id)+'" aria-expanded="'+open.has(b.id)+'">'+(open.has(b.id)?'Voir moins de prestations':(list.length-SHOW===1?'Voir l\'autre prestation':'Voir les '+(list.length-SHOW)+' autres prestations'))+'</button>':'')
         :'<p class="svoff">Pas encore de prestation en ligne.</p>')+'</section>';
   }).join('');
 }
 $('svlist').addEventListener('click',e=>{
+  const more=e.target.closest('[data-more]');
+  if(more){const id=more.dataset.more,wasOpen=open.has(id);if(wasOpen)open.delete(id);else open.add(id);drawServices();
+    if(wasOpen){const h=document.getElementById('bg-'+id);if(h&&h.getBoundingClientRect().top<0)h.scrollIntoView({block:'start'})}
+    else{const first=document.querySelector('[data-b="'+CSS.escape(id)+'"][data-i="'+SHOW+'"]');if(first)first.focus({preventScroll:true})}
+    return}
   const btn=e.target.closest('[data-i]');if(!btn)return;
   const b=team().find(x=>x.id===btn.dataset.b);if(!b)return;
   const list=(b.services||[]).filter(x=>x&&x.n);

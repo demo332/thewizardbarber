@@ -69,6 +69,18 @@ img.av{object-fit:cover}
 .leaveadd{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .leaveadd input{flex:1 1 130px;width:auto}.leaveadd span{color:var(--mute)}
 .team .tools button.edit{color:#2f6fe4}
+.team .tools button.svc{color:#4a2fa3;border-style:solid;border-color:#cfc5f2;background:#f6f3ff}
+.team .tools button.imp{color:#fff;background:#4a2fa3;border:0}
+.svlist{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:6px;max-height:42vh;overflow:auto}
+.svlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px}
+.svlist li b{font-size:14px}.svlist li small{color:var(--mute);font-size:12px;grid-column:1}
+.svlist li .acts{grid-row:1/span 2;grid-column:2;display:flex;gap:4px}
+.svlist li .acts button{min-height:34px;min-width:34px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;padding:0 8px}
+.svlist li .acts button.rm{color:#b3191d}
+.svlist li.editing{border-color:#4a2fa3;background:#f6f3ff}
+.svlist li.empty{display:block;border:0;color:var(--mute);padding:0}
+.svform{border:1px dashed #cfc5f2;border-radius:12px;padding:4px 12px 12px;margin-top:6px}
+.svform .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 .team button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;border:1px solid var(--line);border-radius:999px;background:#fff;font-weight:600;cursor:pointer;color:var(--ink)}
 .team button .av{width:32px;height:32px;border-radius:50%;background:#161616;color:#fff;display:grid;place-items:center;font:600 14px Oswald,sans-serif}
 .team button small{font-weight:500;color:var(--mute)}
@@ -92,7 +104,7 @@ img.av{object-fit:cover}
 .ch em{display:block;font-style:normal;font-size:12px;color:var(--mute)}
 .tm{font-size:12px;color:var(--mute);text-align:right;padding:2px 8px 0 0;border-right:1px solid var(--line);white-space:nowrap}
 .tm.h{color:var(--ink);font-weight:600}
-.cell{height:54px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:3px;position:relative}
+.cell{height:38px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:3px;position:relative}
 .cell.hour{border-bottom-style:dashed}
 .cell.free{cursor:pointer}.cell.free:hover{background:#fafaf9}
 .cell.free:hover::after{content:"+";position:absolute;inset:0;display:grid;place-items:center;color:#bbb;font-size:22px}
@@ -101,8 +113,8 @@ img.av{object-fit:cover}
 .cell.now{box-shadow:inset 0 2px 0 var(--red)}
 .cell.shut{background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);cursor:default}
 .ev{width:100%;height:100%;border:0;border-left:4px solid var(--c);border-radius:6px;background:color-mix(in srgb,var(--c) 15%,#fff);color:var(--ink);text-align:left;padding:4px 8px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
-.ev b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ev small{font-size:12px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev{padding:2px 8px!important}.ev b{font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev small{font-size:11px;line-height:1.2;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev:hover{background:color-mix(in srgb,var(--c) 25%,#fff)}
 .ev.done{background:#effaf2;border-left-color:var(--green)}
 .ev.done b::before{content:"✓ ";color:var(--green)}
@@ -113,7 +125,7 @@ img.av{object-fit:cover}
 .ev.past:not(.done):not(.absent):not(.block){opacity:.75}
 .closedcol{grid-row:span var(--rows);display:grid;place-items:center;color:var(--mute);background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);border-right:1px solid var(--line)}
 /* dialogs */
-dialog{border:0;border-radius:14px;padding:0;width:min(460px,94vw);color:var(--ink)}
+dialog{border:0;border-radius:14px;padding:0;width:min(460px,94vw);color:var(--ink);max-height:92vh;overflow:auto}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 .dh{padding:18px 22px;color:#fff;background:var(--c,#161616)}
 .dh h3{font-size:26px}.dh p{margin:4px 0 0;opacity:.9}
@@ -273,6 +285,45 @@ textarea{min-height:70px;resize:vertical}
   </div>
 </form></dialog>
 
+<!-- Prestations d'un coiffeur -->
+<dialog id="sdlg"><form id="sform">
+  <div class="dh" style="--c:#4a2fa3"><h3>Prestations</h3><p>Ce que le coiffeur propose sur le site, avec ses prix et ses durées.</p></div>
+  <div class="db">
+    <label for="swho">Coiffeur</label>
+    <select id="swho"></select>
+    <label>Prestations affichées</label>
+    <ul class="svlist" id="slist"></ul>
+    <div class="svform">
+      <label for="sname">Titre (en gras) <span class="danger">*</span></label>
+      <input id="sname" maxlength="80" placeholder="Ex. : Coupe + Barbe">
+      <label for="sdesc">Description <span style="font-weight:400;color:var(--mute)">(facultatif)</span></label>
+      <input id="sdesc" maxlength="160" placeholder="Ex. : Paiement en espèces préférable.">
+      <div class="g2">
+        <div><label for="sprice">Prix (€) <span class="danger">*</span></label><input id="sprice" type="number" min="0" max="999" step="0.5" inputmode="decimal" placeholder="20"></div>
+        <div><label for="sdur">Durée <span class="danger">*</span></label><select id="sdur"></select></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button type="button" class="btn" id="sreset" hidden>Annuler la modification</button><button type="button" class="btn dark" id="sadd">Ajouter la prestation</button></div>
+    </div>
+    <p class="err" id="snote" style="color:var(--mute)"></p>
+    <label for="spass">Mot de passe gestion <span class="danger">*</span></label>
+    <input id="spass" type="password" autocomplete="off">
+    <div class="err" id="serr"></div>
+    <div class="row"><button type="button" class="btn" id="sclose">Fermer</button><button class="btn red" id="ssave">Enregistrer</button></div>
+  </div>
+</form></dialog>
+
+<!-- Importer l'équipe de départ -->
+<dialog id="idlg"><form id="iform">
+  <div class="dh" style="--c:#4a2fa3"><h3>Importer l'équipe</h3><p id="iwho"></p></div>
+  <div class="db">
+    <p style="margin:0 0 8px">Les coiffeurs et toutes leurs prestations (titres, descriptions, prix, durées) seront ajoutés au site. Tu pourras ensuite tout modifier depuis l'admin.</p>
+    <label for="ipass">Mot de passe gestion <span class="danger">*</span></label>
+    <input id="ipass" type="password" required autocomplete="off">
+    <div class="err" id="ierr"></div>
+    <div class="row"><button type="button" class="btn" id="iclose">Annuler</button><button class="btn red" id="isave">Importer</button></div>
+  </div>
+</form></dialog>
+
 <!-- Supprimer un coiffeur -->
 <dialog id="xdlg"><form id="xform">
   <div class="dh" style="--c:#b3191d"><h3>Supprimer un coiffeur</h3><p>Il disparaît du site et son agenda est effacé.</p></div>
@@ -297,7 +348,7 @@ textarea{min-height:70px;resize:vertical}
 
 <script type="module">
 import { firebaseConfig } from './firebase-config.js';
-import { SERVICES, SHOPS, OPEN_HOUR, CLOSE_HOUR, CLOSED_DAYS, slotsFor, works, MANAGER_EMAIL } from './salon.js';
+import { SHOPS, OPEN_HOUR, CLOSE_HOUR, CLOSED_DAYS, slotsFor, works, MANAGER_EMAIL, SLOTS, STEP, serviceColor, DEFAULT_TEAM } from './salon.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, query, where, onSnapshot, doc, writeBatch, updateDoc, deleteDoc, setDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -305,7 +356,6 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 const DAYS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
 const MONTHS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const SHORT=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-const SLOTS=[];for(let h=OPEN_HOUR;h<CLOSE_HOUR;h++){SLOTS.push(String(h).padStart(2,'0')+':00',String(h).padStart(2,'0')+':30')}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -314,10 +364,15 @@ const sid=(d,t,b)=>d+'_'+t.replace(':','')+(b?'_'+b:'');
 const slotB=id=>String(id).split('_')[2]||null; /* coiffeur d'un créneau, d'après son identifiant */
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const longDate=s=>{const d=fromIso(s);return DAYS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]};
-const svc=n=>SERVICES.find(s=>s.n===n)||{n:n||'Prestation',color:'#6b7280',prix:0,dur:30};
+/* prestation d'un RDV : nom, couleur, durée et prix enregistrés au moment de la réservation */
+const svcOf=b=>{
+  let d=+b.dur;
+  if(!d){const br=team().find(x=>x.id===b.barber);const s=br&&(br.services||[]).find(x=>x.n===b.service);d=s?+s.dur:30}
+  return {n:b.service||'Prestation',color:serviceColor(b.service),price:typeof b.price==='number'?b.price:null,dur:d||30};
+};
 const dur=m=>m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+String(m%60).padStart(2,'0'):'');
 /* créneaux occupés par un RDV (1 pour 30 min, 2 pour 40 min…) */
-const idsOf=b=>{const i=SLOTS.indexOf(b.t);if(i<0)return[b.id];const n=slotsFor(svc(b.service));const out=[];for(let j=0;j<n&&i+j<SLOTS.length;j++)out.push(sid(b.d,SLOTS[i+j],b.barber));return out.length?out:[b.id]};
+const idsOf=b=>{const i=SLOTS.indexOf(b.t);if(i<0)return[b.id];const n=slotsFor(svcOf(b).dur);const out=[];for(let j=0;j<n&&i+j<SLOTS.length;j++)out.push(sid(b.d,SLOTS[i+j],b.barber));return out.length?out:[b.id]};
 const pl=(n,w)=>n+' '+w+(n>1?'s':'');
 const euro=n=>n.toLocaleString('fr-FR')+' €';
 
@@ -391,8 +446,8 @@ function watchTeam(){
 function drawTeam(){
   const t=team();$('team').hidden=false;
   const cnt=id=>Object.values(bookings).filter(b=>b.barber===id).length;
-  const tools='<span class="tools"><button type="button" id="addBarber">+ Ajouter un coiffeur</button>'+(t.length?'<button type="button" class="edit" id="editBarber">Modifier un coiffeur</button><button type="button" class="del" id="delBarber">Supprimer un coiffeur</button>':'')+'</span>';
-  if(!t.length){$('team').innerHTML='<span class="none">Aucun coiffeur : un seul planning pour tout le salon.</span>'+tools;return}
+  const tools='<span class="tools">'+(t.length?'':'<button type="button" class="imp" id="importTeam">Importer l\'équipe de départ</button>')+'<button type="button" id="addBarber">+ Ajouter un coiffeur</button>'+(t.length?'<button type="button" class="svc" id="svcBarber">Prestations</button><button type="button" class="edit" id="editBarber">Modifier un coiffeur</button><button type="button" class="del" id="delBarber">Supprimer un coiffeur</button>':'')+'</span>';
+  if(!t.length){$('team').innerHTML='<span class="none">Aucun coiffeur pour l\'instant : importe l\'équipe de départ ('+esc(DEFAULT_TEAM.map(b=>b.name).join(', '))+') ou ajoute un coiffeur.</span>'+tools;return}
   $('team').innerHTML='<b>Coiffeur :</b><button type="button" data-sel="all" class="'+(sel==='all'?'on':'')+'"><span class="av">★</span>Toute l\'équipe <small>(jour)</small></button>'+
     t.map(x=>'<button type="button" data-sel="'+esc(x.id)+'" class="'+(sel===x.id?'on':'')+'">'+avatar(x)+esc(x.name)+' <small>'+cnt(x.id)+'</small></button>').join('')+tools;
 }
@@ -404,6 +459,8 @@ $('team').addEventListener('click',e=>{
   if(e.target.closest('#addBarber'))return openAddBarber();
   if(e.target.closest('#delBarber'))return openDelBarber();
   if(e.target.closest('#editBarber'))return openEditBarber();
+  if(e.target.closest('#svcBarber'))return openServices();
+  if(e.target.closest('#importTeam'))return openImport();
   const b=e.target.closest('[data-sel]');if(!b)return;
   sel=b.dataset.sel;if(sel==='all'&&view!=='day')view='day';
   subscribe();
@@ -441,16 +498,16 @@ function render(){
   const blocked=Object.keys(slots).filter(k=>!bookings[k]&&!cont[k]&&(!team().length||sel==='all'||slotB(k)===sel)).length;
   const used=list.reduce((n,b)=>n+idsOf(b).length,0);
   const fill=capacity?Math.round(100*used/Math.max(1,capacity-blocked)):0;
-  const total=active.reduce((s,b)=>s+(svc(b.service).prix||0),0);
+  const total=active.reduce((s,b)=>s+(typeof b.price==='number'?b.price:0),0);
   const upcoming=list.filter(b=>b.status==='ok'&&new Date(fromIso(b.d).setHours(+b.t.slice(0,2),+b.t.slice(3)))>now).sort((x,y)=>(x.d+x.t).localeCompare(y.d+y.t))[0];
   const todayCount=list.filter(b=>b.d===todayIso).length;
   $('stats').innerHTML=
     '<div class="stat"><span>Rendez-vous '+(view==='day'?'ce jour':'cette semaine')+'</span><b>'+list.length+'</b><small>'+pl(list.filter(b=>b.status==='done').length,'venu')+' · '+pl(list.filter(b=>b.status==='absent').length,'absent')+'</small></div>'+
     '<div class="stat"><span>Remplissage</span><b>'+Math.min(100,fill)+' %</b><small>'+blocked+' créneau'+(blocked>1?'x':'')+' bloqué'+(blocked>1?'s':'')+'</small></div>'+
-    '<div class="stat"><span>Chiffre estimé</span><b>'+euro(total)+'</b><small>sur la base des prix « à partir de »</small></div>'+
+    '<div class="stat"><span>Chiffre estimé</span><b>'+euro(total)+'</b><small>sur la base des prix affichés</small></div>'+
     '<div class="stat"><span>Prochain client</span><b>'+(upcoming?esc(upcoming.t):'—')+'</b><small>'+(upcoming?esc(upcoming.name)+(upcoming.d!==todayIso?' · '+esc(longDate(upcoming.d)):''):(range().some(d=>iso(d)===todayIso)?todayCount+' RDV aujourd\'hui':'Aucun sur la période'))+'</small></div>';
   // légende
-  $('legend').innerHTML=SERVICES.map(s=>'<span><i style="background:'+s.color+'"></i>'+esc(s.n)+'</span>').join('')+
+  $('legend').innerHTML='<span>Une couleur par prestation</span>'+
     '<span><i style="background:#effaf2;border-left:4px solid #16a34a"></i>Venu</span><span><i style="background:repeating-linear-gradient(45deg,#fff 0 3px,#f7c9ca 3px 6px)"></i>Absent</span><span><i style="background:repeating-linear-gradient(45deg,#ddd 0 3px,#f6f6f6 3px 6px)"></i>Bloqué</span>';
   // grille
   const cal=$('cal');cal.style.setProperty('--n',cols.length);
@@ -464,18 +521,18 @@ function render(){
   const closedDay=cols.map(c=>!works(c.b,c.d));
   SLOTS.forEach((t,ri)=>{
     const isHour=t.endsWith(':00');
-    h+='<div class="tm'+(isHour?' h':'')+'">'+t+'</div>';
+    h+='<div class="tm'+(isHour?' h':'')+'">'+(t.endsWith(':00')||t.endsWith(':30')?t:'')+'</div>';
     cols.forEach((col,ci)=>{
       const d=col.d,bid=col.b&&col.b.id;
       if(closedDay[ci]){if(ri===0)h+='<div class="closedcol" style="--rows:'+SLOTS.length+';grid-row:span '+SLOTS.length+'">'+offLabel(col.b,d)+'</div>';return}
       const k=iso(d),id=sid(k,t,bid);
-      const st=new Date(d);st.setHours(+t.slice(0,2),+t.slice(3));const en=new Date(st.getTime()+30*60000);
+      const st=new Date(d);st.setHours(+t.slice(0,2),+t.slice(3));const en=new Date(st.getTime()+STEP*60000);
       const past=en<=now,isNow=st<=now&&now<en;
       let cls='cell'+(isHour?'':' hour')+(past?' past':'')+(k===todayIso&&!past?' todaycol':'')+(isNow?' now':'');
       const b=bookings[id],s=slots[id],c=cont[id]&&bookings[cont[id]];
       let inner='';
-      if(c&&!b){const v=svc(c.service);inner='<button class="ev cont'+(c.status==='done'?' done':c.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(c.id)+'"><small>↳ suite · '+esc(c.name)+'</small></button>'}
-      else if(b){const v=svc(b.service);inner='<button class="ev'+(b.status==='done'?' done':b.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(id)+'"><b>'+esc(b.name)+'</b><small>'+esc(v.n)+(b.phone?' · '+esc(b.phone):'')+'</small></button>'}
+      if(c&&!b){const v=svcOf(c);inner='<button class="ev cont'+(c.status==='done'?' done':c.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(c.id)+'"><small>↳ suite · '+esc(c.name)+'</small></button>'}
+      else if(b){const v=svcOf(b);inner='<button class="ev'+(b.status==='done'?' done':b.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(id)+'"><b>'+esc(b.name)+'</b><small>'+esc(v.n)+(b.phone?' · '+esc(b.phone):'')+'</small></button>'}
       else if(s){inner='<button class="ev block" data-x="'+esc(id)+'"><b>Bloqué</b></button>'}
       else if(!past){cls+=' free'}
       h+='<div class="'+cls+'" data-d="'+k+'" data-t="'+t+'" data-bb="'+esc(bid||'')+'"'+(cls.includes('free')?' role="button" tabindex="0" aria-label="Créneau libre '+t+'"':'')+'>'+inner+'</div>';
@@ -501,14 +558,13 @@ $('cal').addEventListener('click',e=>{
 $('cal').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('.cell.free'))openFree(e.target.dataset.d,e.target.dataset.t,e.target.dataset.bb||null)});
 
 function openBooking(id){
-  const b=bookings[id];if(!b)return;current=id;const v=svc(b.service);
+  const b=bookings[id];if(!b)return;current=id;const v=svcOf(b);
   $('dhead').style.setProperty('--c',v.color);
   $('dname').textContent=b.name;$('dwhen').textContent=longDate(b.d)+' à '+b.t+(b.barber?' · avec '+barberName(b.barber):'');
   const tel=String(b.phone||'').replace(/[^0-9+]/g,'');
   $('dinfo').innerHTML=(b.barber?'<dt>Coiffeur</dt><dd>'+esc(barberName(b.barber))+'</dd>':'')+'<dt>Prestation</dt><dd>'+esc(v.n)+'</dd>'+
-    '<dt>Durée · prix</dt><dd>'+dur(v.dur||30)+' · '+esc(v.p||(v.prix?euro(v.prix):'—'))+'</dd>'+
+    '<dt>Durée · prix</dt><dd>'+dur(v.dur)+' · '+(v.price!=null?euro(v.price):'—')+'</dd>'+
     '<dt>Téléphone</dt><dd>'+(b.phone?'<a href="tel:'+esc(tel)+'">'+esc(b.phone)+'</a>':'—')+'</dd>'+
-    '<dt>Rappel SMS</dt><dd>'+(b.reminded?(String(b.reminded).startsWith('20')?'envoyé le '+esc(new Date(b.reminded).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):esc(b.reminded)):'pas encore envoyé')+'</dd>'+
     '<dt>Réservé le</dt><dd>'+(b.created?esc(new Date(b.created).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—')+'</dd>';
   $('dnote').value=b.note||'';$('derr').textContent='';
   $('dcancel').textContent='Annuler le RDV';delete $('dcancel').dataset.armed;
@@ -535,12 +591,18 @@ $('bclose').onclick=()=>$('bdlg').close();
 $('bfree').onclick=async()=>{try{await deleteDoc(ref('slots',current));$('bdlg').close()}catch(_){$('berr').textContent='Impossible de débloquer, réessaie.'}};
 
 /* ajouter / bloquer */
-$('aserv').innerHTML=SERVICES.map(s=>'<option value="'+esc(s.n)+'">'+esc(s.n)+' ('+dur(s.dur||30)+')</option>').join('');
+/* prestations du coiffeur choisi dans le formulaire « + Rendez-vous » */
+const servicesOf=bid=>{const b=team().find(x=>x.id===bid);return((b&&b.services)||[]).filter(x=>x&&x.n)};
+function fillServiceSelect(){
+  const list=servicesOf($('abarber').value);
+  $('aserv').innerHTML=list.length?list.map((x,i)=>'<option value="'+i+'">'+esc(x.n)+' ('+dur(+x.dur||30)+(typeof x.price==='number'?' · '+euro(x.price):'')+')</option>').join(''):'<option value="-1">Prestation libre (30 min)</option>';
+}
+$('abarber').addEventListener('change',()=>{fillServiceSelect();newSlot.b=$('abarber').value});
 $('atime').innerHTML=SLOTS.map(t=>'<option>'+t+'</option>').join('');
 $('atime').setAttribute('aria-label','Heure');
 function openFree(d,t,b){
   b=b||(sel&&sel!=='all'?sel:(team()[0]||{}).id||null);
-  newSlot={d,t,b};$('adate').value=d;$('atime').value=t;if(b)$('abarber').value=b;
+  newSlot={d,t,b};$('adate').value=d;$('atime').value=t;if(b)$('abarber').value=b;fillServiceSelect();
   $('awhen').textContent=longDate(d)+' à '+t+(b?' · '+barberName(b):'');
   ['aname','aphone','anote'].forEach(i=>$(i).value='');$('aerr').textContent='';
   tab('rdv');$('adlg').showModal();$('aname').focus();
@@ -564,15 +626,17 @@ $('aform').addEventListener('submit',async e=>{
   const dd=fromIso(d);if(CLOSED_DAYS.includes(dd.getDay())){$('aerr').textContent='Le salon est fermé ce jour-là.';return}
   const bid=team().length?$('abarber').value:null,bo=team().find(x=>x.id===bid);
   if(bo&&!works(bo,dd)){$('aerr').textContent=bo.name+' ne travaille pas ce jour-là.';return}
-  const id=sid(d,t,bid),sv=svc($('aserv').value),n=slotsFor(sv),i0=SLOTS.indexOf(t);
+  const sl=servicesOf(bid),sv=sl[+$('aserv').value]||{n:'Prestation',dur:30};
+  const id=sid(d,t,bid),n=slotsFor(sv.dur),i0=SLOTS.indexOf(t);
   if(i0+n>SLOTS.length){$('aerr').textContent='Pas assez de temps avant la fermeture pour cette prestation.';return}
   const need=SLOTS.slice(i0,i0+n).map(x=>sid(d,x,bid));
-  if(need.some(k=>slots[k])){$('aerr').textContent=n>1?'Ce créneau ou le suivant est déjà pris ou bloqué ('+dur(sv.dur)+').':'Ce créneau est déjà pris ou bloqué.';return}
+  if(need.some(k=>slots[k])){$('aerr').textContent=n>1?'Il n\'y a pas assez de place à partir de cet horaire pour '+dur(+sv.dur||30)+'.':'Ce créneau est déjà pris ou bloqué.';return}
   $('asave').disabled=true;
   try{
     const batch=writeBatch(db);
     need.forEach((k,j)=>batch.set(ref('slots',k),{d,t:SLOTS[i0+j],taken:true}));
-    const data={d,t,name,phone:$('aphone').value.trim(),service:$('aserv').value,status:'ok',note:$('anote').value.trim(),created:new Date().toISOString()};
+    const data={d,t,name,phone:$('aphone').value.trim(),service:String(sv.n).slice(0,80),dur:+sv.dur||30,status:'ok',note:$('anote').value.trim(),created:new Date().toISOString()};
+    if(typeof sv.price==='number')data.price=sv.price;
     if(bid)data.barber=bid;
     batch.set(ref('bookings',id),data);
     await batch.commit();$('adlg').close();
@@ -721,6 +785,75 @@ $('eform').addEventListener('submit',async e=>{
   try{await asManager($('epass').value,mdb=>updateDoc(doc(mdb,'shops',shop.id,'barbers',id),{off,leave:leaves}));$('edlg').close()}
   catch(err){$('eerr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'L\'enregistrement a échoué. Vérifie que les nouvelles règles Firestore sont publiées.'}
   finally{$('esave').disabled=false;$('epass').value=''}
+});
+/* ----- Prestations d'un coiffeur (ajouter / modifier / supprimer / ordre) ----- */
+let svcs=[],svcEdit=-1;
+const DURS=[10,15,20,25,30,35,40,45,50,55,60,75,90,105,120];
+$('sdur').innerHTML=DURS.map(m=>'<option value="'+m+'"'+(m===30?' selected':'')+'>'+dur(m)+'</option>').join('');
+function openServices(){
+  $('swho').innerHTML=team().map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+  if(sel&&sel!=='all')$('swho').value=sel;
+  loadServices();$('spass').value='';$('serr').textContent='';$('sdlg').showModal();
+}
+function loadServices(){
+  const b=team().find(x=>x.id===$('swho').value)||{};
+  svcs=(b.services||[]).filter(x=>x&&x.n).map(x=>({...x}));
+  resetSvcForm();drawSvcs();
+}
+function drawSvcs(){
+  $('slist').innerHTML=svcs.length?svcs.map((x,i)=>'<li class="'+(i===svcEdit?'editing':'')+'"><b>'+esc(x.n)+'</b><small>'+esc(dur(+x.dur||30))+(typeof x.price==='number'?' · '+esc(euro(x.price)):'')+(x.d?' · '+esc(x.d):'')+'</small><span class="acts">'+
+    (i>0?'<button type="button" data-up="'+i+'" aria-label="Monter">↑</button>':'')+'<button type="button" data-ed="'+i+'">Modifier</button><button type="button" class="rm" data-rm="'+i+'">Supprimer</button></span></li>').join('')
+    :'<li class="empty">Aucune prestation : ajoute la première ci-dessous.</li>';
+  $('snote').textContent='N\'oublie pas d\'enregistrer avec le mot de passe gestion.';
+}
+function resetSvcForm(){svcEdit=-1;$('sname').value='';$('sdesc').value='';$('sprice').value='';$('sdur').value='30';$('sadd').textContent='Ajouter la prestation';$('sreset').hidden=true}
+$('swho').addEventListener('change',loadServices);
+$('slist').addEventListener('click',e=>{
+  const up=e.target.closest('[data-up]'),ed=e.target.closest('[data-ed]'),rm=e.target.closest('[data-rm]');
+  if(up){const i=+up.dataset.up;[svcs[i-1],svcs[i]]=[svcs[i],svcs[i-1]];svcEdit=-1;resetSvcForm();drawSvcs()}
+  if(ed){const i=+ed.dataset.ed,x=svcs[i];svcEdit=i;$('sname').value=x.n;$('sdesc').value=x.d||'';$('sprice').value=typeof x.price==='number'?x.price:'';
+    if(!DURS.includes(+x.dur))$('sdur').insertAdjacentHTML('beforeend','<option value="'+(+x.dur)+'">'+dur(+x.dur)+'</option>');
+    $('sdur').value=String(+x.dur||30);$('sadd').textContent='Valider la modification';$('sreset').hidden=false;drawSvcs();$('sname').focus()}
+  if(rm){const i=+rm.dataset.rm;if(rm.dataset.armed!=='1'){rm.dataset.armed='1';rm.textContent='Sûr ?';return}svcs.splice(i,1);resetSvcForm();drawSvcs()}
+});
+$('sreset').onclick=()=>{resetSvcForm();drawSvcs()};
+$('sadd').onclick=()=>{
+  const n=$('sname').value.trim(),d=$('sdesc').value.trim(),p=parseFloat(String($('sprice').value).replace(',','.')),m=parseInt($('sdur').value,10);
+  if(!n){$('serr').textContent='Le titre est obligatoire.';return}
+  if(!(p>=0)){$('serr').textContent='Indique le prix.';return}
+  if(!(m>0)){$('serr').textContent='Indique la durée.';return}
+  const x={n,dur:m,price:Math.round(p*100)/100};if(d)x.d=d;
+  if(svcEdit>=0)svcs[svcEdit]=x;else{if(svcs.length>=40){$('serr').textContent='40 prestations maximum par coiffeur.';return}svcs.push(x)}
+  $('serr').textContent='';resetSvcForm();drawSvcs();
+};
+$('sclose').onclick=()=>$('sdlg').close();
+$('sform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=$('swho').value;if(!id)return;
+  if($('sname').value.trim()){$('sadd').click();if($('serr').textContent)return}
+  if(!$('spass').value){$('serr').textContent='Tape le mot de passe gestion pour enregistrer.';return}
+  $('ssave').disabled=true;$('serr').textContent='';
+  try{await asManager($('spass').value,mdb=>updateDoc(doc(mdb,'shops',shop.id,'barbers',id),{services:svcs}));$('sdlg').close()}
+  catch(err){$('serr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'L\'enregistrement a échoué. Vérifie que les nouvelles règles Firestore sont publiées.'}
+  finally{$('ssave').disabled=false;$('spass').value=''}
+});
+
+/* ----- Importer l'équipe de départ (salon.js > DEFAULT_TEAM) ----- */
+function openImport(){$('iwho').textContent=DEFAULT_TEAM.map(b=>b.name).join(', ');$('ipass').value='';$('ierr').textContent='';$('idlg').showModal();$('ipass').focus()}
+$('iclose').onclick=()=>$('idlg').close();
+$('iform').addEventListener('submit',async e=>{
+  e.preventDefault();$('isave').disabled=true;$('ierr').textContent='';
+  try{
+    await asManager($('ipass').value,async mdb=>{
+      const base=Date.now();
+      for(const [i,b] of DEFAULT_TEAM.entries()){
+        if(team().some(x=>x.id===b.id))continue;
+        await setDoc(doc(mdb,'shops',shop.id,'barbers',b.id),{name:b.name,order:base+i,off:[],leave:[],services:b.services.map(x=>({...x}))});
+      }
+    });
+    $('idlg').close();
+  }catch(err){$('ierr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'L\'import a échoué. Vérifie que les nouvelles règles Firestore sont publiées.'}
+  finally{$('isave').disabled=false;$('ipass').value=''}
 });
 </script>
 </body>

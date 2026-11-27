@@ -26,8 +26,8 @@ export const works = (barber, d) => {
   return !(barber.leave || []).some(r => r && k >= r.from && k <= r.to); // congés (du … au …)
 };
 
-// Les créneaux font STEP minutes (15 = un horaire toutes les 15 min). Une prestation occupe autant de créneaux que nécessaire.
-export const STEP = 15;
+// Les créneaux font STEP minutes (5 = précision de 5 min). Une prestation occupe autant de créneaux que nécessaire.
+export const STEP = 5;
 export const SLOTS = [];
 for (let m = OPEN_HOUR * 60; m < CLOSE_HOUR * 60; m += STEP) SLOTS.push(String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
 // Nombre de créneaux qu'occupe une prestation de « dur » minutes

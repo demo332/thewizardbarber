@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b1226">
+<meta name="theme-color" content="#c4d5e2">
 <meta name="description" content="The Wizard Barber : réservez votre coupe ou votre barbe en ligne, avec le coiffeur de votre choix. Confirmation immédiate, paiement sur place.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <title>The Wizard Barber · Réservation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700&family=Alfa+Slab+One&family=Josefin+Sans:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: confident, sharp, a neighbourhood barber with a clean black storefront.
-   IDEA: the shop's own sign over a ticket-style booking card, the barber pole as a thin trim.
-   PICTURE: the logo large on a black ground with a red glow; the booking card sits right under it.
-   COLOUR and TYPE: black, white, logo red; Oswald titles, Inter text, the logo in its own serif.
-   LAYOUT: header, hero + booking card, salons, hours, footer; phone first, sticky CTA on phones. */
-:root{color-scheme:dark;--bg:#0b1226;--bg2:#0f1733;--panel:#141d3d;--line:#26315a;--ink:#f4f5fb;--mute:#a9b0cc;--red:#f2c14e;--red2:#ffd36e;--acc:#f2c14e;--onacc:#0b1226;--violet:#3b2483;--card:#fff;--cink:#141414;--cmute:#6b6b6b;--cline:#ececec;--r:16px}
+/* VOICE: calm, neat, a neighbourhood barber with a pale-blue sign and navy lettering.
+   IDEA: the shop's own banner over a ticket-style booking card.
+   PICTURE: the real logo large on the banner's own blue-white ground; the booking card sits right under it.
+   COLOUR and TYPE: banner blue-white, logo navy, white cards; Oswald titles, Inter text.
+   LAYOUT: header, hero + booking card, location, hours, footer; phone first. */
+:root{color-scheme:light;--bg:#c4d5e2;--bg2:#b9cbd9;--panel:rgba(255,255,255,.72);--line:#a8bccc;--ink:#1b2842;--mute:#46566e;--red:#1b2842;--red2:#2c3f63;--acc:#1b2842;--onacc:#fff;--violet:#1b2842;--card:#fff;--cink:#1b2842;--cmute:#5f6b7e;--cline:#e3e8ee;--r:16px}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
 html{scroll-padding-top:76px;-webkit-text-size-adjust:100%}
@@ -29,32 +29,32 @@ a{color:inherit}
 .wrap{max-width:1180px;margin:0 auto;padding:0 max(4vw,16px)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;border-radius:12px;background:var(--red);color:var(--onacc);font:600 16px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn:hover{background:var(--red2)}
-.btn.dark{background:var(--cink)}.btn.dark:hover{background:#333}
+.btn.dark{background:var(--cink);color:#fff}.btn.dark:hover{background:#2c3f63}
 .btn.ghost{background:transparent;border:1px solid #d6d6d6;color:var(--cink)}
-.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-weight:500;font-size:14px;background:#18224a}
-.chip:hover{border-color:#555}
-.pole{height:4px;background:linear-gradient(90deg,#3b2483,#f2c14e 50%,#3b2483)}
+.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-weight:600;font-size:14px;background:#fff}
+.chip:hover{border-color:var(--ink)}
+.pole{height:3px;background:var(--ink);opacity:.85}
 
 /* header */
-header{position:sticky;top:0;z-index:20;background:rgba(11,18,38,.86);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid #1c2650;padding-top:env(safe-area-inset-top)}
+header{position:sticky;top:0;z-index:20;background:rgba(196,213,226,.9);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid #aec2d2;padding-top:env(safe-area-inset-top)}
 nav{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:8px 26px;padding:8px max(4vw,16px);min-height:64px}
 nav .brand{display:block;margin-right:auto;line-height:0}
-nav .brand svg{height:44px;width:auto}
+nav .brand img{height:46px;width:auto;display:block}
 nav a.l{text-decoration:none;color:var(--mute);font-weight:500;font-size:15px}
-nav a.l:hover{color:#fff}
+nav a.l:hover{color:var(--ink)}
 nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 
 /* hero */
-.hero{position:relative;text-align:center;padding:clamp(34px,7vw,84px) 0 clamp(26px,4vw,40px);background:radial-gradient(55% 60% at 50% 0%,rgba(242,193,78,.18),transparent 70%),linear-gradient(160deg,#0f1a33 0%,#24195a 55%,#3b2483 100%)}
-.hero .biglogo{width:min(520px,86vw);height:auto;display:block;margin:0 auto;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
+.hero{position:relative;text-align:center;padding:clamp(34px,7vw,84px) 0 clamp(26px,4vw,40px);background:linear-gradient(180deg,#d4e1eb 0%,var(--bg) 100%)}
+.hero .biglogo{width:min(460px,86vw);height:auto;display:block;margin:0 auto}
 .hero h1{font-size:clamp(26px,4.4vw,44px);margin-top:clamp(18px,3vw,28px);letter-spacing:.01em}
 .hero p{color:var(--mute);margin:10px auto 0;max-width:56ch;font-size:clamp(15px,1.8vw,17px)}
 .badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
-.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(11,18,38,.55);border:1px solid var(--line);font-size:14px;font-weight:500;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid var(--line);font-size:14px;font-weight:500;white-space:nowrap}
 .badge i{width:8px;height:8px;border-radius:50%;background:var(--red2);display:inline-block}
 
 /* booking card */
-.book{color-scheme:light;background:var(--card);color:var(--cink);border-radius:22px;box-shadow:0 30px 80px rgba(10,8,40,.55),0 2px 0 rgba(255,255,255,.06) inset;overflow:hidden;margin-bottom:clamp(40px,7vw,90px)}
+.book{color-scheme:light;background:var(--card);color:var(--cink);border-radius:22px;box-shadow:0 24px 60px rgba(27,40,66,.18);overflow:hidden;margin-bottom:clamp(40px,7vw,90px)}
 .steps{display:flex;gap:0;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--cline);background:#fafafa;overflow-x:auto;scrollbar-width:none}
 .steps::-webkit-scrollbar{display:none}
 .steps li{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 12px;font-size:14px;font-weight:600;color:#a3a3a3;white-space:nowrap;border-bottom:3px solid transparent}
@@ -79,17 +79,17 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .sv .ds{grid-column:1;color:var(--cmute);font-size:14px;line-height:1.35}
 .bjump{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 16px;padding-bottom:2px}.bjump::-webkit-scrollbar{display:none}
 .bjump a{flex:none;display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--cline);color:var(--cink);text-decoration:none;font-weight:600;font-size:14px;background:#fff}
-.bjump a:hover{border-color:var(--violet);color:var(--violet)}
+.bjump a:hover{border-color:var(--ink)}
 .svoff{color:var(--cmute);font-size:14px;margin:0}
 .more{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;padding:0 4px;border:0;background:none;color:var(--violet);font:600 15px Inter,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.more:hover{color:#2a1870}
+.more:hover{color:#2c3f63}
 .sv{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:14px 14px 14px 18px;border:1px solid var(--cline);border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s}
 .sv:hover{border-color:#cfcfcf;box-shadow:0 6px 18px rgba(0,0,0,.06)}
 .sv .nm{font-weight:600;font-size:16px}
 .sv .meta{grid-column:1;display:flex;align-items:center;gap:8px;color:var(--cmute);font-size:14px;white-space:nowrap}
 .sv .meta b{color:var(--cink);font-weight:600}
 .sv .btn{grid-row:1/span 3;grid-column:2;min-height:44px;padding:0 18px;background:var(--cink);color:#fff;font-size:15px}
-.sv .btn:hover{background:var(--violet);color:#fff}
+.sv .btn:hover{background:#2c3f63;color:#fff}
 
 /* salons (choix) */
 #shoplist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px}
@@ -108,7 +108,7 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .barber span.nm{flex:1;font-weight:600}
 .barber .rd{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #c4c4c4}
 .barber.on{border:2px solid var(--cink);padding:9px 13px;background:#fafafa}.barber.on .rd{border:7px solid var(--violet)}
-#barberGo{width:100%;background:var(--violet);color:#fff}#barberGo:hover{background:#4a2fa3}
+#barberGo{width:100%;background:var(--violet);color:#fff}#barberGo:hover{background:#2c3f63}
 
 /* planning */
 .ph{display:flex;align-items:center;gap:8px;margin:4px 0 10px}
@@ -142,7 +142,7 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 
 /* sections */
 .section{padding:clamp(44px,7vw,90px) 0}
-.section.alt{background:var(--bg2);border-top:1px solid #1c2650;border-bottom:1px solid #1c2650}
+.section.alt{background:var(--bg2);border-top:1px solid #aec2d2;border-bottom:1px solid #aec2d2}
 .lead{color:var(--mute);margin:10px 0 0;max-width:60ch}
 .map{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);margin-top:24px;background:#eef0ec;aspect-ratio:16/7;min-height:220px}
 .map svg{position:absolute;inset:0;width:100%;height:100%}
@@ -150,25 +150,25 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .shopcard{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
 .pinnum{flex:none;width:44px;height:44px;border-radius:50%;background:var(--red);color:var(--onacc);display:grid;place-items:center;font:600 20px Oswald,sans-serif}
 .shopcard h3{font-size:24px}
-.addr{display:flex;align-items:center;gap:8px;margin:6px 0 0;color:#d4d4d4}.addr svg{color:var(--red2);flex:none}
+.addr{display:flex;align-items:center;gap:8px;margin:6px 0 0;color:var(--ink)}.addr svg{color:var(--ink);flex:none}
 .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(30px,5vw,70px);align-items:start}
 .hours{width:100%;border-collapse:collapse;margin-top:18px;font-variant-numeric:tabular-nums}
 .hours td{padding:13px 0;border-bottom:1px solid var(--line)}
 .hours td+td{text-align:right;white-space:nowrap;font-weight:600}
-.hours tr.today td{color:var(--red2)}
+.hours tr.today td{color:var(--ink);font-weight:700}.hours tr.today td:first-child::after{content:" · aujourd'hui";font-weight:500;color:var(--mute)}
 .how{list-style:none;padding:0;margin:18px 0 22px;display:grid;gap:14px}
-.how li{display:flex;gap:14px;align-items:flex-start;color:#d4d4d4}
+.how li{display:flex;gap:14px;align-items:flex-start;color:var(--ink)}
 .how li b{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--acc);color:var(--acc)!important;display:grid;place-items:center;font:600 15px Oswald,sans-serif;color:#fff}
 .how li span{padding-top:4px}
 
 /* footer */
 footer{border-top:1px solid var(--line);color:var(--mute);font-size:14px;padding:36px 0 calc(36px + env(safe-area-inset-bottom))}
 footer .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:18px 40px;align-items:center}
-footer .flogo{width:180px;height:auto}
+footer .flogo{width:200px;height:auto}
 footer p{margin:0;line-height:1.7}
 footer a.admin{color:var(--mute);font-size:14px;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
-footer a.admin:hover{color:#fff;border-color:#555}
+footer a.admin:hover{color:var(--ink);border-color:var(--ink)}
 
 
 /* fenêtre de réservation */
@@ -192,7 +192,7 @@ textarea{min-height:76px;resize:vertical}
 @media(max-width:700px){
   nav{min-height:58px;padding:6px 16px}nav .brand svg{height:40px}nav .btn{min-height:40px;padding:0 14px;font-size:14px}
   .hero{padding:22px 0 18px}
-  .hero .biglogo{width:min(340px,86vw)}
+  .hero .biglogo{width:min(320px,84vw)}
   .hero h1{font-size:24px}
   .hero p{font-size:15px}
   .badges{gap:6px}.badge{font-size:13px;padding:7px 11px}
@@ -225,24 +225,8 @@ textarea{min-height:76px;resize:vertical}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="sc" viewBox="-12 -8 24 16">
-    <g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="-7" cy="-3.6" r="3"/><circle cx="-7" cy="3.6" r="3"/></g>
-    <path d="M-4.4 -2.4 L11 3.4 L10 4.6 Z M-4.4 2.4 L11 -3.4 L10 -4.6 Z" fill="currentColor"/>
-  </symbol>
-  <symbol id="logo" viewBox="0 0 520 150">
-    <text x="260" y="88" text-anchor="middle" font-family="'Alfa Slab One',Rockwell,Georgia,serif" font-size="92" textLength="440" lengthAdjust="spacingAndGlyphs" transform="translate(260 88) scale(1 1.12) translate(-260 -88)" fill="#fff">THE WIZARD</text>
-    <g style="color:var(--acc)">
-      <line x1="60" y1="125" x2="118" y2="125" stroke="currentColor" stroke-width="2.5"/>
-      <use href="#sc" x="116" y="115" width="28" height="20"/>
-      <line x1="402" y1="125" x2="460" y2="125" stroke="currentColor" stroke-width="2.5"/>
-      <use href="#sc" x="376" y="115" width="28" height="20" transform="rotate(180 390 125)"/>
-    </g>
-    <text x="260" y="137" text-anchor="middle" font-family="'Josefin Sans',Inter,sans-serif" font-size="32" letter-spacing="8" fill="#fff">BARBER</text>
-  </symbol>
-</svg>
 <header><nav>
-  <a class="brand" href="#top" aria-label="The Wizard Barber, accueil"><svg class="" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg></a>
+  <a class="brand" href="#top" aria-label="The Wizard Barber, accueil"><img class="" src="logo-wizard.png" alt="The Wizard Barber" width="1068" height="300"></a>
   <a class="l" href="#reserver">Réserver</a>
   <a class="l" href="#salon">Nous trouver</a>
   <a class="l" href="#horaires">Horaires</a>
@@ -253,7 +237,7 @@ textarea{min-height:76px;resize:vertical}
 <main id="top">
 <section class="hero">
   <div class="wrap">
-    <svg class="biglogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <img class="biglogo" src="logo-wizard.png" alt="The Wizard Barber" width="1068" height="300">
     <h1>Réservez votre coupe en ligne</h1>
     <p>Coupes, dégradés, barbe : choisissez votre prestation, votre coiffeur et votre horaire. C'est réservé en moins d'une minute.</p>
     <div class="badges"><span class="badge"><i></i><span id="hoursBadge">Lun – Sam</span></span><span class="badge"><i></i>Confirmation immédiate</span><span class="badge"><i></i>Paiement sur place</span></div>
@@ -305,7 +289,7 @@ textarea{min-height:76px;resize:vertical}
         <button class="arrow" id="next" aria-label="Semaine suivante">›</button>
       </div>
       <div class="grid" id="grid"></div>
-      <div class="legend"><span>Touchez un horaire pour réserver</span><span><s>10:00</s> déjà pris</span></div>
+      <div class="legend"><span>Touchez un horaire pour réserver. Seuls les horaires libres sont affichés.</span></div>
       <div class="status" id="status" role="status"></div>
     </div>
   </div>
@@ -348,7 +332,7 @@ textarea{min-height:76px;resize:vertical}
 <div class="pole"></div>
 <footer>
   <div class="wrap">
-    <svg class="flogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <img class="flogo" src="logo-wizard.png" alt="The Wizard Barber" width="1068" height="300">
     <p id="footInfo">The Wizard Barber</p>
     <a class="admin" href="admin.html">Espace salon</a>
   </div>
@@ -494,6 +478,19 @@ function candidates(k,i,n){
   if(barber==='any')return team().filter(b=>freeFor(b,k,i,n));
   return barber&&freeFor(barber,k,i,n)?[barber]:[];
 }
+/* horaires proposés un jour donné : seulement les libres (les pris ou bloqués disparaissent).
+   Précision 5 min : on propose chaque quart d'heure, plus l'horaire pile à la fin d'un RDV ou d'un blocage,
+   pour remplir les trous (ex. 18:20 si un RDV finit à 18:20). */
+function freeTimes(d,k,n,now){
+  const out=[],bid=barber&&barber!=='any'?barber.id:null;
+  SLOTS.forEach((t,idx)=>{
+    const x=new Date(d);x.setHours(+t.slice(0,2),+t.slice(3));if(x<=now)return;
+    if(!candidates(k,idx,n).length)return;
+    const m=+t.slice(3),afterBusy=idx>0&&bid&&taken.has(sid(k,SLOTS[idx-1],bid));
+    if(m%15===0||afterBusy)out.push(t);
+  });
+  return out;
+}
 function loadOf(b,k){let c=0;for(const id of taken)if(id.startsWith(k+'_')&&id.endsWith('_'+b.id))c++;return c}
 
 /* Étape 4 : agenda */
@@ -514,14 +511,8 @@ function render(){
     if(CLOSED_DAYS.includes(d.getDay())){html+='<div class="closed">Fermé</div>'}
     else if(barber&&barber!=='any'&&!works(barber,d)){html+='<div class="closed">'+esc(barber.name)+' ne travaille pas</div>'}
     else{
-      let shown=0;
-      SLOTS.forEach((t,idx)=>{
-        const x=new Date(d);x.setHours(+t.slice(0,2),+t.slice(3));if(x<=now)return;
-        shown++;
-        html+=candidates(k,idx,n).length?'<button class="s" data-d="'+k+'" data-t="'+t+'">'+t+'</button>'
-          :'<button class="s taken" disabled aria-label="'+t+' indisponible">'+t+'</button>';
-      });
-      if(!shown)html+='<div class="closed">Plus de créneau</div>';
+      const free=freeTimes(d,k,n,now);
+      html+=free.length?free.map(t=>'<button class="s" data-d="'+k+'" data-t="'+t+'">'+t+'</button>').join(''):'<div class="closed">Complet</div>';
     }
     html+='</div>';
   }
@@ -538,7 +529,7 @@ function renderPhone(start,n,now){
     let why='',free=[];
     if(CLOSED_DAYS.includes(d.getDay()))why='Fermé';
     else if(barber&&barber!=='any'&&!works(barber,d))why=barber.name+' ne travaille pas ce jour-là';
-    else SLOTS.forEach((t,idx)=>{const x=new Date(d);x.setHours(+t.slice(0,2),+t.slice(3));if(x>now&&candidates(k,idx,n).length)free.push(t)});
+    else free=freeTimes(d,k,n,now);
     days.push({d,k,why,free});
   }
   if(!mDay||!days.some(x=>x.k===mDay))mDay=(days.find(x=>x.free.length)||days[0]).k;

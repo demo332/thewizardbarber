@@ -72,13 +72,21 @@ nav .btn{min-height:42px;padding:0 18px;font-size:15px}
 .chosen button:hover{border-color:var(--cink)}
 
 /* prestations */
-#svlist{display:grid;gap:10px}
+#svlist{display:grid;gap:26px}
+.bgroup h3{font-size:22px;margin:0 0 10px;display:flex;align-items:center;gap:10px;scroll-margin-top:84px}
+.bgroup h3 .av{width:40px;height:40px;border-radius:50%;background:var(--violet);color:#fff;display:grid;place-items:center;font:600 17px Oswald,sans-serif;object-fit:cover;flex:none}
+.bgroup .rows{display:grid;gap:10px}
+.sv .ds{grid-column:1;color:var(--cmute);font-size:14px;line-height:1.35}
+.bjump{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 16px;padding-bottom:2px}.bjump::-webkit-scrollbar{display:none}
+.bjump a{flex:none;display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--cline);color:var(--cink);text-decoration:none;font-weight:600;font-size:14px;background:#fff}
+.bjump a:hover{border-color:var(--violet);color:var(--violet)}
+.svoff{color:var(--cmute);font-size:14px;margin:0}
 .sv{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:14px 14px 14px 18px;border:1px solid var(--cline);border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s}
 .sv:hover{border-color:#cfcfcf;box-shadow:0 6px 18px rgba(0,0,0,.06)}
 .sv .nm{font-weight:600;font-size:16px}
 .sv .meta{grid-column:1;display:flex;align-items:center;gap:8px;color:var(--cmute);font-size:14px;white-space:nowrap}
 .sv .meta b{color:var(--cink);font-weight:600}
-.sv .btn{grid-row:1/span 2;grid-column:2;min-height:44px;padding:0 18px;background:var(--cink);color:#fff;font-size:15px}
+.sv .btn{grid-row:1/span 3;grid-column:2;min-height:44px;padding:0 18px;background:var(--cink);color:#fff;font-size:15px}
 .sv .btn:hover{background:var(--violet);color:#fff}
 
 /* salons (choix) */
@@ -253,15 +261,15 @@ textarea{min-height:76px;resize:vertical}
 <div class="wrap bookwrap" id="reserver">
   <div class="book" id="book" data-step="step1" data-team="1">
     <ol class="steps" aria-label="Étapes de la réservation">
-      <li data-s="step1"><b>1</b><span>Prestation</span></li>
-      <li data-s="stepBarber"><b>2</b><span>Coiffeur</span></li>
+      <li data-s="step1"><b>1</b><span>Coiffeur et prestation</span></li>
       <li data-s="step2"><b>✓</b><span>Horaire</span></li>
     </ol>
 
     <div class="panel" id="step1">
       <h2>Choisissez votre prestation</h2>
-      <p class="hint">Tous les prix sont indicatifs, le règlement se fait au salon.</p>
-      <div id="svlist"></div>
+      <p class="hint">Chaque coiffeur a ses prestations et ses tarifs. Le règlement se fait au salon.</p>
+      <div class="bjump" id="bjump"></div>
+      <div id="svlist"><p class="hint">Chargement des prestations…</p></div>
     </div>
 
     <div class="panel" id="stepShop" hidden>
@@ -286,7 +294,7 @@ textarea{min-height:76px;resize:vertical}
       <div class="recap">
         <div class="chosen"><div><b id="cname"></b><span id="cmeta"></span></div><button type="button" class="chg-svc">Modifier</button></div>
         <div class="chosen" hidden><div><b id="sname"></b><span id="saddr"></span></div><button type="button" class="chg-shop">Changer</button></div>
-        <div class="chosen" id="barberBar" hidden><div><b id="bname"></b><span id="bsub"></span></div><button type="button" id="chgBarber">Changer</button></div>
+        <div class="chosen" id="barberBar" hidden><div><b id="bname"></b><span id="bsub"></span></div><button type="button" id="chgBarber">Changer de coiffeur</button></div>
       </div>
       <h2>Choisissez votre horaire</h2>
       <div class="ph">
@@ -370,13 +378,12 @@ textarea{min-height:76px;resize:vertical}
 
 <script type="module">
 import { firebaseConfig } from './firebase-config.js';
-import { SERVICES, SHOPS, OPEN_HOUR, CLOSE_HOUR, CLOSED_DAYS, slotsFor, works, PHONE } from './salon.js';
+import { SHOPS, OPEN_HOUR, CLOSE_HOUR, CLOSED_DAYS, slotsFor, works, PHONE, SLOTS } from './salon.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, query, where, onSnapshot, doc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const DAYS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
 const MONTHS=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-const SLOTS=[];for(let h=OPEN_HOUR;h<CLOSE_HOUR;h++){SLOTS.push(String(h).padStart(2,'0')+':00',String(h).padStart(2,'0')+':30')}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -387,6 +394,7 @@ const hh=h=>String(h).padStart(2,'0')+'h00';
 /* identifiant d'un créneau : date_heure, + _coiffeur quand le salon a des coiffeurs */
 const sid=(d,t,b)=>d+'_'+t.replace(':','')+(b?'_'+b:'');
 const dur=m=>m<60?m+'min':Math.floor(m/60)+'h'+(m%60?String(m%60).padStart(2,'0'):'');
+const price=s=>(s.price!=null&&s.price!=='')?String(s.price).replace('.',',')+' €':'';
 
 let week=0,taken=new Set(),db=null,picked=null,service=null,shop=null,barber=null,unsub=null,loaded=false;
 /* barber : null = salon sans coiffeurs, 'any' = sans préférence, sinon l'objet coiffeur */
@@ -411,19 +419,34 @@ document.querySelectorAll('.chg-svc').forEach(b=>b.onclick=()=>show('step1'));
 document.querySelectorAll('.chg-shop').forEach(b=>b.onclick=()=>show('stepShop'));
 document.querySelectorAll('a[href="#reserver"]').forEach(a=>a.addEventListener('click',()=>{if($('step1').hidden)restart()}));
 function fillSummaries(){
-  for(const k of ['','1','2'])if(service){$('cname'+k).textContent=service.n;$('cmeta'+k).textContent=dur(service.dur)+' · '+service.p}
+  for(const k of ['','1','2'])if(service){$('cname'+k).textContent=service.n;$('cmeta'+k).textContent=dur(service.dur)+(price(service)?' · '+price(service):'')}
   for(const k of ['','2'])if(shop){$('sname'+k).textContent=shop.name;$('saddr'+k).textContent=shop.addr}
   $('barberBar').hidden=!team().length||!barber;
   $('book').dataset.team=shop&&!team().length?'0':'1';
-  if(barber){$('bname').textContent=barber==='any'?'Sans préférence':'Avec '+barber.name;$('bsub').textContent=barber==='any'?'Le premier coiffeur disponible à l\'horaire choisi':'Horaires disponibles de '+barber.name}
+  if(barber){$('bname').textContent='Avec '+barber.name;$('bsub').textContent='Horaires disponibles de '+barber.name}
 }
 
 /* Étape 1 : prestations */
-$('svlist').innerHTML=SERVICES.map((s,i)=>'<div class="sv"><span class="nm">'+s.n+'</span><span class="meta"><span>'+dur(s.dur)+'</span>·<b>'+s.p+'</b></span><button class="btn" data-i="'+i+'">Choisir</button></div>').join('');
+/* prestations regroupées par coiffeur (« Avec Yoris », « Avec Sado »…), lues en direct dans la base */
+function drawServices(){
+  const t=team();
+  if(!t.length){$('svlist').innerHTML='<p class="hint">'+(db?'Les prestations arrivent bientôt.':'Réservation en ligne bientôt disponible.')+'</p>';$('bjump').innerHTML='';return}
+  $('bjump').innerHTML=t.length>1?t.map(b=>'<a href="#bg-'+esc(b.id)+'">'+esc(b.name)+'</a>').join(''):'';
+  $('svlist').innerHTML=t.map(b=>{
+    const list=(b.services||[]).filter(x=>x&&x.n);
+    return '<section class="bgroup"><h3 id="bg-'+esc(b.id)+'">'+(photoOk(b.photo)?'<img class="av" alt="" src="'+b.photo+'">':'<span class="av">'+esc(String(b.name)[0]||'?')+'</span>')+'Avec '+esc(b.name)+'</h3>'+
+      (list.length?'<div class="rows">'+list.map((x,i)=>'<div class="sv"><span class="nm">'+esc(x.n)+'</span>'+(x.d?'<span class="ds">'+esc(x.d)+'</span>':'')+'<span class="meta"><span>'+esc(dur(+x.dur||30))+'</span>'+(price(x)?'·<b>'+esc(price(x))+'</b>':'')+'</span><button class="btn" data-b="'+esc(b.id)+'" data-i="'+i+'">Choisir</button></div>').join('')+'</div>'
+        :'<p class="svoff">Pas encore de prestation en ligne.</p>')+'</section>';
+  }).join('');
+}
 $('svlist').addEventListener('click',e=>{
-  const b=e.target.closest('[data-i]');if(!b)return;
-  service=SERVICES[+b.dataset.i];fillSummaries();nextAfterService();
+  const btn=e.target.closest('[data-i]');if(!btn)return;
+  const b=team().find(x=>x.id===btn.dataset.b);if(!b)return;
+  const list=(b.services||[]).filter(x=>x&&x.n);
+  service={...list[+btn.dataset.i]};service.dur=+service.dur||30;
+  barber=b;mDay=null;fillSummaries();show('step2');render();
 });
+$('bjump').addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();const h=document.getElementById(a.getAttribute('href').slice(1));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})});
 
 /* Étape 2 : salon */
 $('shoplist').innerHTML=SHOPS.map((x,i)=>'<button type="button" class="shopbtn" data-s="'+i+'"><span class="num">'+(i+1)+'</span><div><b>'+esc(x.name)+'</b><span>'+esc(x.addr)+'</span></div><em>Choisir</em></button>').join('');
@@ -447,7 +470,7 @@ function openBarbers(){choice=barber&&barber!=='any'?barber.id:'any';drawBarbers
 $('barberlist').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;choice=b.dataset.b;drawBarbers()});
 $('barberlist').addEventListener('dblclick',e=>{if(e.target.closest('[data-b]'))$('barberGo').click()});
 $('barberGo').onclick=()=>{barber=choice==='any'?'any':team().find(x=>x.id===choice);fillSummaries();show('step2');render()};
-$('chgBarber').onclick=openBarbers;
+$('chgBarber').onclick=()=>show('step1');
 
 /* disponibilités */
 function freeFor(b,k,i,n){ // b : objet coiffeur ou null
@@ -466,7 +489,7 @@ function loadOf(b,k){let c=0;for(const id of taken)if(id.startsWith(k+'_')&&id.e
 /* Étape 4 : agenda */
 function render(){
   if(!service||!shop||(team().length&&!barber))return;
-  const n=slotsFor(service);
+  const n=slotsFor(service.dur);
   const start=new Date(today);start.setDate(start.getDate()+week*7);
   const end=new Date(start);end.setDate(end.getDate()+6);
   $('wk').textContent=(week===0?'Cette semaine · ':'')+fmt(start)+' – '+fmt(end);
@@ -547,7 +570,7 @@ $('form').addEventListener('submit',async e=>{
   if(!first||!last||!phone){$('ferr').textContent='Merci d\'indiquer votre prénom, votre nom et votre téléphone.';return}
   if(!/^[0-9 +().-]{8,20}$/.test(phone)){$('ferr').textContent='Le numéro de téléphone ne semble pas valide.';return}
   if(!db){$('ferr').textContent='La réservation en ligne n\'est pas encore disponible. Merci de contacter le salon.';return}
-  const n=slotsFor(service),idx=SLOTS.indexOf(picked.t);
+  const n=slotsFor(service.dur),idx=SLOTS.indexOf(picked.t);
   // « sans préférence » : le coiffeur libre le moins chargé ce jour-là
   const cands=candidates(picked.d,idx,n).sort((a,b)=>a?loadOf(a,picked.d)-loadOf(b,picked.d):0);
   if(!cands.length){$('ferr').textContent='Désolé, ce créneau n\'est plus libre. Choisissez-en un autre.';return}
@@ -558,7 +581,8 @@ $('form').addEventListener('submit',async e=>{
     try{
       const batch=writeBatch(db);
       for(let j=0;j<n;j++){const t=SLOTS[idx+j];batch.set(doc(db,'shops',shop.id,'slots',sid(picked.d,t,bid)),{d:picked.d,t,taken:true})}
-      const data={d:picked.d,t:picked.t,name:(first+' '+last).slice(0,60),phone,service:service.n,status:'ok',created:new Date().toISOString()};
+      const data={d:picked.d,t:picked.t,name:(first+' '+last).slice(0,60),phone,service:String(service.n).slice(0,80),dur:+service.dur||30,status:'ok',created:new Date().toISOString()};
+      if(typeof service.price==='number')data.price=service.price;
       if(bid)data.barber=bid;
       if(note)data.note=note;
       batch.set(doc(db,'shops',shop.id,'bookings',sid(picked.d,picked.t,bid)),data);
@@ -577,6 +601,7 @@ $('form').addEventListener('submit',async e=>{
 
 setInterval(render,60000);
 show('step1',true);
+drawServices();
 /* infos du salon (adresse, téléphone, horaires) tirées de salon.js */
 {
   const DSHORT=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
@@ -619,10 +644,8 @@ if(!firebaseConfig||!firebaseConfig.apiKey||firebaseConfig.apiKey.startsWith('CO
     for(const x of SHOPS)onSnapshot(collection(db,'shops',x.id,'barbers'),snap=>{
       live[x.id]=snap.docs.map(d=>({id:d.id,...d.data()})).filter(b=>b.name).sort((a,b)=>(a.order||0)-(b.order||0));
       if(shop&&shop.id===x.id){
-        if(!team().length)barber=null;
-        else if(barber&&barber!=='any')barber=team().find(b=>b.id===barber.id)||null;
-        if(team().length&&!barber&&!$('step2').hidden)openBarbers();
-        if(!$('stepBarber').hidden)drawBarbers();
+        drawServices();
+        if(barber&&barber!=='any'){barber=team().find(b=>b.id===barber.id)||null;if(!barber&&!$('step2').hidden)show('step1')}
         fillSummaries();render();
       }
     },()=>{});

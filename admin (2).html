@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<title>The Wizard · Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600&family=Alfa+Slab+One&family=Josefin+Sans:wght@400&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a working tool for the barber, fast to read between two clients.
+   IDEA: the shop's paper appointment book, one column per day, one line per half hour.
+   PICTURE: the week agenda itself, coloured blocks by service, status marks on top.
+   COLOUR and TYPE: logo black bar, white page, logo red for "now"; Oswald titles + Inter.
+   LAYOUT: black top bar, stats row, legend, agenda full width; day view on phones. */
+:root{color-scheme:light;--bg:#f4f5fa;--card:#fff;--ink:#161a2e;--mute:#666d85;--line:#e3e5ee;--red:#4a2fa3;--green:#16a34a;--black:#0f1733;--acc:#f2c14e}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Oswald,Impact,sans-serif;font-weight:600;line-height:1.1;margin:0}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#bbb}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}.btn.red:hover{background:#3b2483}
+.btn.dark{background:#1d1d1d;border-color:#333;color:#fff}.btn.dark:hover{background:#2a2a2a}
+.btn.icon{width:44px;padding:0;font-size:22px}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;background:radial-gradient(55% 50% at 50% 0%,rgba(242,193,78,.16),transparent 70%),linear-gradient(160deg,#0f1a33,#24195a 55%,#3b2483);padding:24px}
+.lcard{width:min(380px,100%);text-align:center;color:#fff}
+.lcard .llogo{width:min(300px,80vw);height:auto;display:block;margin:0 auto 8px}
+.lcard h1{font-size:30px;margin:6px 0 20px}
+.lcard input{width:100%;min-height:48px;border-radius:8px;border:1px solid #3a4475;background:rgba(11,18,38,.6);color:#fff;padding:0 14px;font-size:16px;margin-bottom:10px}
+.lcard .btn{width:100%}
+.lerr{color:#ff6b6e;min-height:22px;margin-top:10px;font-size:14px}
+.lcard a{color:#aaa;font-size:14px}
+.shopTag{font-size:14px;color:#bbb;margin-right:auto}
+/* app */
+#app{display:none}#app.on{display:block}
+.top{background:linear-gradient(90deg,#0f1a33,#24195a);color:#fff;position:sticky;top:0;z-index:10}
+.top .tlogo{height:38px;width:auto}
+.topin{max-width:1500px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px max(2vw,12px)}
+.top img{width:44px;height:44px}
+.top h1{font-size:22px}
+.top .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.wrap{max-width:1500px;margin:0 auto;padding:16px max(2vw,12px) 40px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.period{font-family:Oswald,sans-serif;font-size:clamp(20px,2.6vw,28px);font-weight:600;margin-right:auto;white-space:nowrap}
+.team{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+.team b{font-weight:600;margin-right:4px}
+.team .tools{display:flex;gap:8px;margin-left:auto}
+.team .tools button{padding:0 14px;border-style:dashed}
+.team .tools button.del{color:#b3191d}
+.team .none{color:var(--mute)}
+img.av{object-fit:cover}
+.photorow{display:flex;align-items:center;gap:12px}
+.photorow .prev{flex:none;width:56px;height:56px;border-radius:50%;background:#eee;display:grid;place-items:center;color:#999;font:600 20px Oswald,sans-serif;overflow:hidden}
+.photorow .prev img{width:100%;height:100%;object-fit:cover}
+.photorow input{min-height:auto;border:0;padding:0}
+.dcbs{display:flex;flex-wrap:wrap;gap:6px}
+.dcb{display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:500;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer}
+.dcb input{width:18px;height:18px;min-height:0}
+.leaves{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:6px}
+.leaves li{display:flex;align-items:center;gap:10px;background:#f4f6fb;border:1px solid #dbe3f5;border-radius:8px;padding:6px 6px 6px 12px;font-weight:500}
+.leaves li span{flex:1}.leaves li button{min-height:36px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:0 10px;cursor:pointer;color:#b3191d;font-weight:600}
+.leaves li.empty{background:none;border:0;padding:0;color:var(--mute);font-weight:400}
+.leaveadd{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.leaveadd input{flex:1 1 130px;width:auto}.leaveadd span{color:var(--mute)}
+.team .tools button.edit{color:#2f6fe4}
+.team button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;border:1px solid var(--line);border-radius:999px;background:#fff;font-weight:600;cursor:pointer;color:var(--ink)}
+.team button .av{width:32px;height:32px;border-radius:50%;background:#161616;color:#fff;display:grid;place-items:center;font:600 14px Oswald,sans-serif}
+.team button small{font-weight:500;color:var(--mute)}
+.team button.on{background:#0f1733;color:#fff;border-color:#0f1733}.team button.on .av{background:var(--red)}.team button.on small{color:#ccc}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.seg button{min-height:42px;padding:0 14px;border:0;background:none;font-weight:600;cursor:pointer;color:var(--mute)}
+.seg button.on{background:#161616;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat span{display:block;color:var(--mute);font-size:13px}
+.stat b{font-family:Oswald,sans-serif;font-size:26px;font-weight:600;line-height:1.2;white-space:nowrap}
+.stat small{display:block;color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--mute);margin-bottom:10px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+.msg{background:#fff4e5;border:1px solid #f5c26b;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:none}.msg.on{display:block}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.cal{display:grid;grid-template-columns:58px repeat(var(--n),minmax(150px,1fr));min-width:calc(58px + var(--n)*150px)}
+.ch{position:sticky;top:0;background:#fff;border-bottom:2px solid var(--ink);padding:10px 8px;text-align:center;z-index:2}
+.ch b{display:block;text-transform:capitalize}.ch span{color:var(--mute);font-size:13px}
+.ch.today{color:var(--red);border-bottom-color:var(--red)}
+.ch em{display:block;font-style:normal;font-size:12px;color:var(--mute)}
+.tm{font-size:12px;color:var(--mute);text-align:right;padding:2px 8px 0 0;border-right:1px solid var(--line);white-space:nowrap}
+.tm.h{color:var(--ink);font-weight:600}
+.cell{height:54px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:3px;position:relative}
+.cell.hour{border-bottom-style:dashed}
+.cell.free{cursor:pointer}.cell.free:hover{background:#fafaf9}
+.cell.free:hover::after{content:"+";position:absolute;inset:0;display:grid;place-items:center;color:#bbb;font-size:22px}
+.cell.past{background:#fafaf9}
+.cell.todaycol{background:#fffafa}
+.cell.now{box-shadow:inset 0 2px 0 var(--red)}
+.cell.shut{background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);cursor:default}
+.ev{width:100%;height:100%;border:0;border-left:4px solid var(--c);border-radius:6px;background:color-mix(in srgb,var(--c) 15%,#fff);color:var(--ink);text-align:left;padding:4px 8px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.ev b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev small{font-size:12px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev:hover{background:color-mix(in srgb,var(--c) 25%,#fff)}
+.ev.done{background:#effaf2;border-left-color:var(--green)}
+.ev.done b::before{content:"✓ ";color:var(--green)}
+.ev.absent{background:repeating-linear-gradient(45deg,#fff 0 6px,#fdecec 6px 12px);border-left-color:#999}
+.ev.absent b{text-decoration:line-through;color:#888}
+.ev.cont{border-top-left-radius:0;border-top-right-radius:0;margin-top:-4px;height:calc(100% + 4px)}
+.ev.block{background:repeating-linear-gradient(45deg,#ececec 0 6px,#f6f6f6 6px 12px);border-left-color:#777;color:#555}
+.ev.past:not(.done):not(.absent):not(.block){opacity:.75}
+.closedcol{grid-row:span var(--rows);display:grid;place-items:center;color:var(--mute);background:repeating-linear-gradient(45deg,#f1f1f0 0 8px,#fafaf9 8px 16px);border-right:1px solid var(--line)}
+/* dialogs */
+dialog{border:0;border-radius:14px;padding:0;width:min(460px,94vw);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.dh{padding:18px 22px;color:#fff;background:var(--c,#161616)}
+.dh h3{font-size:26px}.dh p{margin:4px 0 0;opacity:.9}
+.db{padding:18px 22px 22px}
+.info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:0 0 16px}
+.info dt{color:var(--mute)}.info dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+input,select,textarea{width:100%;min-height:44px;font-size:16px;padding:8px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.row .btn{flex:1}
+.stseg{display:flex;gap:6px;flex-wrap:wrap}
+.stseg button{flex:1;min-height:42px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:600;cursor:pointer}
+.stseg button.on[data-s=ok]{background:#161616;color:#fff;border-color:#161616}
+.stseg button.on[data-s=done]{background:var(--green);color:#fff;border-color:var(--green)}
+.stseg button.on[data-s=absent]{background:var(--red);color:#fff;border-color:var(--red)}
+.tabs{display:flex;gap:6px;margin-bottom:6px}.tabs button{flex:1}
+.tabs .btn.on{background:#161616;color:#fff;border-color:#161616}
+.err{color:#b3191d;font-size:14px;min-height:20px;margin-top:8px}
+.danger{color:#b3191d}
+@media(max-width:700px){.top h1,.top .site{display:none}.shopTag{width:100%;order:-1}.period{width:100%}}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form class="lcard" id="lform">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sc" viewBox="-12 -8 24 16">
+    <g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="-7" cy="-3.6" r="3"/><circle cx="-7" cy="3.6" r="3"/></g>
+    <path d="M-4.4 -2.4 L11 3.4 L10 4.6 Z M-4.4 2.4 L11 -3.4 L10 -4.6 Z" fill="currentColor"/>
+  </symbol>
+  <symbol id="logo" viewBox="0 0 520 150">
+    <text x="260" y="88" text-anchor="middle" font-family="'Alfa Slab One',Rockwell,Georgia,serif" font-size="92" textLength="440" lengthAdjust="spacingAndGlyphs" transform="translate(260 88) scale(1 1.12) translate(-260 -88)" fill="#fff">THE WIZARD</text>
+    <g style="color:var(--acc)">
+      <line x1="60" y1="125" x2="118" y2="125" stroke="currentColor" stroke-width="2.5"/>
+      <use href="#sc" x="116" y="115" width="28" height="20"/>
+      <line x1="402" y1="125" x2="460" y2="125" stroke="currentColor" stroke-width="2.5"/>
+      <use href="#sc" x="376" y="115" width="28" height="20" transform="rotate(180 390 125)"/>
+    </g>
+    <text x="260" y="137" text-anchor="middle" font-family="'Josefin Sans',Inter,sans-serif" font-size="32" letter-spacing="8" fill="#fff">BARBER</text>
+  </symbol>
+</svg>
+    <svg class="llogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <h1>Espace salon</h1>
+    <input id="lmail" type="email" autocomplete="username" hidden>
+    <input id="lpass" type="password" placeholder="Mot de passe" autocomplete="current-password" required aria-label="Mot de passe">
+    <button class="btn red" id="lbtn">Ouvrir l'agenda</button>
+    <div class="lerr" id="lerr" role="alert"></div>
+    <a href="./">← Retour au site</a>
+  </form>
+</section>
+
+<div id="app">
+  <header class="top"><div class="topin">
+    <svg class="tlogo" viewBox="0 0 520 150" role="img" aria-label="The Wizard Barber"><use href="#logo"/></svg>
+    <h1>Agenda</h1><span class="shopTag" id="shopTag"></span>
+    <button class="btn icon" id="prev" aria-label="Précédent">‹</button>
+    <button class="btn" id="todayBtn">Aujourd'hui</button>
+    <button class="btn icon" id="next" aria-label="Suivant">›</button>
+    <a class="btn site" href="./" target="_blank" rel="noopener">Voir le site</a>
+    <button class="btn" id="logout">Déconnexion</button>
+  </div></header>
+
+  <div class="wrap">
+    <div class="bar">
+      <div class="period" id="period"></div>
+      <div class="seg" role="group" aria-label="Affichage"><button data-v="day">Jour</button><button data-v="week">Semaine</button></div>
+      <button class="btn red" id="addBtn">+ Rendez-vous</button>
+    </div>
+    <div class="team" id="team" role="radiogroup" aria-label="Coiffeur" hidden></div>
+    <div class="stats" id="stats"></div>
+    <div class="msg" id="msg" role="status"></div>
+    <div class="legend" id="legend"></div>
+    <div class="scroll"><div class="cal" id="cal"></div></div>
+  </div>
+</div>
+
+<!-- Détail d'un rendez-vous -->
+<dialog id="ddlg">
+  <div class="dh" id="dhead"><h3 id="dname"></h3><p id="dwhen"></p></div>
+  <div class="db">
+    <dl class="info" id="dinfo"></dl>
+    <label>Statut</label>
+    <div class="stseg" id="dstatus"><button data-s="ok">Prévu</button><button data-s="done">Venu ✓</button><button data-s="absent">Absent</button></div>
+    <label for="dnote">Précisions / note</label>
+    <textarea id="dnote" maxlength="300" placeholder="Ex. : dégradé bas, client fidèle…"></textarea>
+    <div class="err" id="derr"></div>
+    <div class="row"><button class="btn danger" id="dcancel">Annuler le RDV</button><button class="btn dark" id="dclose">Fermer</button></div>
+  </div>
+</dialog>
+
+<!-- Créneau libre : ajouter ou bloquer -->
+<dialog id="adlg"><form id="aform">
+  <div class="dh"><h3>Créneau libre</h3><p id="awhen"></p></div>
+  <div class="db">
+    <div class="tabs"><button type="button" class="btn on" data-tab="rdv">Ajouter un RDV</button><button type="button" class="btn" data-tab="block">Bloquer</button></div>
+    <div id="tabRdv">
+      <label for="adate">Date et heure</label>
+      <div style="display:flex;gap:8px"><input id="adate" type="date" required><select id="atime"></select></div>
+      <label for="aname">Nom du client</label>
+      <input id="aname" maxlength="60" required>
+      <label for="aphone">Téléphone</label>
+      <input id="aphone" type="tel" maxlength="20" placeholder="Facultatif">
+      <div id="abarberWrap"><label for="abarber">Coiffeur</label>
+      <select id="abarber"></select></div>
+      <label for="aserv">Prestation</label>
+      <select id="aserv"></select>
+      <label for="anote">Note</label>
+      <input id="anote" maxlength="300" placeholder="Facultatif">
+    </div>
+    <div id="tabBlock" hidden>
+      <p style="margin:12px 0 0;color:var(--mute)">Un créneau bloqué n'apparaît plus comme libre sur le site (pause, rendez-vous perso, congé…).</p>
+    </div>
+    <div class="err" id="aerr"></div>
+    <div class="row" id="rowRdv"><button type="button" class="btn" id="aclose">Annuler</button><button class="btn red" id="asave">Ajouter</button></div>
+    <div class="row" id="rowBlock" hidden><button type="button" class="btn" id="ablock1">Bloquer ce créneau</button><button type="button" class="btn dark" id="ablockday">Bloquer toute la journée</button></div>
+  </div>
+</form></dialog>
+
+<!-- Ajouter un coiffeur -->
+<dialog id="mdlg"><form id="mform">
+  <div class="dh" style="--c:#161616"><h3>Ajouter un coiffeur</h3><p id="mshop"></p></div>
+  <div class="db">
+    <label for="mname">Pseudo <span class="danger">*</span></label>
+    <input id="mname" maxlength="30" required placeholder="Ex. : Marco">
+    <label for="mphoto">Photo <span style="font-weight:400;color:var(--mute)">(facultatif)</span></label>
+    <div class="photorow"><span class="prev" id="mprev">?</span><input id="mphoto" type="file" accept="image/*"></div>
+    <label>Jours de repos <span style="font-weight:400;color:var(--mute)">(facultatif)</span></label>
+    <div class="dcbs" id="moff"><label class="dcb"><input type="checkbox" value="1"> Lun</label><label class="dcb"><input type="checkbox" value="2"> Mar</label><label class="dcb"><input type="checkbox" value="3"> Mer</label><label class="dcb"><input type="checkbox" value="4"> Jeu</label><label class="dcb"><input type="checkbox" value="5"> Ven</label><label class="dcb"><input type="checkbox" value="6"> Sam</label></div>
+    <label for="mpass">Mot de passe gestion <span class="danger">*</span></label>
+    <input id="mpass" type="password" required autocomplete="off">
+    <div class="err" id="merr"></div>
+    <div class="row"><button type="button" class="btn" id="mclose">Annuler</button><button class="btn red" id="msave">Ajouter</button></div>
+  </div>
+</form></dialog>
+
+<!-- Modifier un coiffeur : repos et congés -->
+<dialog id="edlg"><form id="eform">
+  <div class="dh" style="--c:#2f6fe4"><h3>Modifier un coiffeur</h3><p id="eshop"></p></div>
+  <div class="db">
+    <label for="ewho">Coiffeur</label>
+    <select id="ewho"></select>
+    <label>Jours de repos chaque semaine</label>
+    <div class="dcbs" id="eoff"><label class="dcb"><input type="checkbox" value="1"> Lun</label><label class="dcb"><input type="checkbox" value="2"> Mar</label><label class="dcb"><input type="checkbox" value="3"> Mer</label><label class="dcb"><input type="checkbox" value="4"> Jeu</label><label class="dcb"><input type="checkbox" value="5"> Ven</label><label class="dcb"><input type="checkbox" value="6"> Sam</label></div>
+    <label>Congés</label>
+    <ul class="leaves" id="eleaves"></ul>
+    <div class="leaveadd">
+      <span>du</span><input id="efrom" type="date" aria-label="Début des congés">
+      <span>au</span><input id="eto" type="date" aria-label="Fin des congés">
+      <button type="button" class="btn" id="eaddLeave">Ajouter</button>
+    </div>
+    <p id="ewarn" class="err" style="color:var(--ink)"></p>
+    <label for="epass">Mot de passe gestion <span class="danger">*</span></label>
+    <input id="epass" type="password" required autocomplete="off">
+    <div class="err" id="eerr"></div>
+    <div class="row"><button type="button" class="btn" id="eclose">Annuler</button><button class="btn red" id="esave">Enregistrer</button></div>
+  </div>
+</form></dialog>
+
+<!-- Supprimer un coiffeur -->
+<dialog id="xdlg"><form id="xform">
+  <div class="dh" style="--c:#b3191d"><h3>Supprimer un coiffeur</h3><p>Il disparaît du site et son agenda est effacé.</p></div>
+  <div class="db">
+    <label for="xwho">Coiffeur</label>
+    <select id="xwho"></select>
+    <p class="err" id="xinfo" style="color:var(--ink)"></p>
+    <label for="xpass">Mot de passe gestion <span class="danger">*</span></label>
+    <input id="xpass" type="password" required autocomplete="off">
+    <div class="err" id="xerr"></div>
+    <div class="row"><button type="button" class="btn" id="xclose">Annuler</button><button class="btn red" id="xsave">Supprimer définitivement</button></div>
+  </div>
+</form></dialog>
+
+<!-- Créneau bloqué -->
+<dialog id="bdlg">
+  <div class="dh" style="--c:#555"><h3>Créneau bloqué</h3><p id="bwhen"></p></div>
+  <div class="db"><div class="err" id="berr"></div>
+    <div class="row"><button class="btn" id="bclose">Fermer</button><button class="btn red" id="bfree">Débloquer</button></div>
+  </div>
+</dialog>
+
+<script type="module">
+import { firebaseConfig } from './firebase-config.js';
+import { SERVICES, SHOPS, OPEN_HOUR, CLOSE_HOUR, CLOSED_DAYS, slotsFor, works, MANAGER_EMAIL } from './salon.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, query, where, onSnapshot, doc, writeBatch, updateDoc, deleteDoc, setDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+const DAYS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MONTHS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const SHORT=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+const SLOTS=[];for(let h=OPEN_HOUR;h<CLOSE_HOUR;h++){SLOTS.push(String(h).padStart(2,'0')+':00',String(h).padStart(2,'0')+':30')}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fromIso=s=>{const[y,m,dd]=String(s).split('-').map(Number);return new Date(y,m-1,dd)};
+const sid=(d,t,b)=>d+'_'+t.replace(':','')+(b?'_'+b:'');
+const slotB=id=>String(id).split('_')[2]||null; /* coiffeur d'un créneau, d'après son identifiant */
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const longDate=s=>{const d=fromIso(s);return DAYS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]};
+const svc=n=>SERVICES.find(s=>s.n===n)||{n:n||'Prestation',color:'#6b7280',prix:0,dur:30};
+const dur=m=>m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+String(m%60).padStart(2,'0'):'');
+/* créneaux occupés par un RDV (1 pour 30 min, 2 pour 40 min…) */
+const idsOf=b=>{const i=SLOTS.indexOf(b.t);if(i<0)return[b.id];const n=slotsFor(svc(b.service));const out=[];for(let j=0;j<n&&i+j<SLOTS.length;j++)out.push(sid(b.d,SLOTS[i+j],b.barber));return out.length?out:[b.id]};
+const pl=(n,w)=>n+' '+w+(n>1?'s':'');
+const euro=n=>n.toLocaleString('fr-FR')+' €';
+
+const configured=firebaseConfig&&firebaseConfig.apiKey&&!firebaseConfig.apiKey.startsWith('COLLE');
+let shop=null;
+/* chemins dans la base, séparés par salon */
+const col=n=>collection(db,'shops',shop.id,n);
+const ref=(n,id)=>doc(db,'shops',shop.id,n,id);
+
+let sel=null; /* coiffeur affiché : id, 'all' (toute l'équipe, vue Jour) ou null (salon sans coiffeurs) */
+let liveTeam=[],unsubTeam=null; /* coiffeurs du salon, lus en direct dans la base */
+const team=()=>liveTeam;
+const photoOk=p=>typeof p==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p);
+const avatar=x=>photoOk(x.photo)?'<img class="av" alt="" src="'+x.photo+'">':'<span class="av">'+esc(String(x.name||'?')[0])+'</span>';
+const barberName=id=>(team().find(x=>x.id===id)||{name:id||''}).name;
+let db=null,auth=null,view=innerWidth<700?'day':'week',anchor=new Date(),bookings={},slots={},unsub=[],current=null,newSlot=null;
+anchor.setHours(0,0,0,0);
+
+if(!configured){$('lerr').textContent='Le fichier firebase-config.js n\'est pas encore rempli.';$('lbtn').disabled=true}
+else{
+  const app=initializeApp(firebaseConfig);db=getFirestore(app);auth=getAuth(app);
+  onAuthStateChanged(auth,u=>{
+    shop=u?SHOPS.find(x=>x.email.toLowerCase()===String(u.email||'').toLowerCase())||null:null;
+    if(u&&!shop){$('lerr').textContent='Ce compte n\'est relié à aucun salon : vérifie les e-mails dans salon.js.';signOut(auth);return}
+    $('login').hidden=!!u;$('app').classList.toggle('on',!!u);
+    if(u){$('shopTag').textContent=shop.name+(shop.addr?' · '+shop.addr:'');document.title='Agenda · '+shop.name;bookings={};slots={};
+      liveTeam=[];sel=null;watchTeam();subscribe()}
+    else{unsub.forEach(f=>f());unsub=[];if(unsubTeam){unsubTeam();unsubTeam=null}}
+  });
+}
+
+$('lform').addEventListener('submit',async e=>{
+  e.preventDefault();if(!auth)return;
+  $('lbtn').disabled=true;$('lerr').textContent='';
+  const x=SHOPS[0];
+  try{await signInWithEmailAndPassword(auth,x.email,$('lpass').value);$('lpass').value=''}
+  catch(_){$('lerr').textContent='Mot de passe incorrect.'}
+  finally{$('lbtn').disabled=false}
+});
+$('logout').onclick=()=>signOut(auth);
+
+/* période affichée */
+function range(){
+  if(view==='day')return[new Date(anchor)];
+  const mon=addDays(anchor,-((anchor.getDay()+6)%7));
+  return[0,1,2,3,4,5,6].map(i=>addDays(mon,i)).filter(d=>!CLOSED_DAYS.includes(d.getDay()));
+}
+/* colonnes de l'agenda : une par jour (un coiffeur) ou une par coiffeur (vue Jour, toute l'équipe) */
+function columns(){
+  if(sel==='all')return team().map(b=>({d:new Date(anchor),b}));
+  const b=sel?team().find(x=>x.id===sel):null;
+  return range().map(d=>({d,b}));
+}
+/* pourquoi un coiffeur ne travaille pas ce jour-là */
+function offLabel(b,d){
+  if(CLOSED_DAYS.includes(d.getDay()))return 'Fermé';
+  if(b&&(b.off||[]).includes(d.getDay()))return 'Repos';
+  return 'Congés';
+}
+const inView=bk=>!team().length||sel==='all'||bk.barber===sel;
+function watchTeam(){
+  if(unsubTeam)unsubTeam();
+  let first=true;
+  unsubTeam=onSnapshot(col('barbers'),snap=>{
+    liveTeam=snap.docs.map(d=>({id:d.id,...d.data()})).filter(b=>b.name).sort((a,b)=>(a.order||0)-(b.order||0));
+    if(!liveTeam.length)sel=null;
+    else if(first||!sel||(sel!=='all'&&!liveTeam.some(b=>b.id===sel))){sel='all';view='day'}
+    first=false;fillBarberSelect();subscribe();
+  },()=>{});
+}
+function drawTeam(){
+  const t=team();$('team').hidden=false;
+  const cnt=id=>Object.values(bookings).filter(b=>b.barber===id).length;
+  const tools='<span class="tools"><button type="button" id="addBarber">+ Ajouter un coiffeur</button>'+(t.length?'<button type="button" class="edit" id="editBarber">Modifier un coiffeur</button><button type="button" class="del" id="delBarber">Supprimer un coiffeur</button>':'')+'</span>';
+  if(!t.length){$('team').innerHTML='<span class="none">Aucun coiffeur : un seul planning pour tout le salon.</span>'+tools;return}
+  $('team').innerHTML='<b>Coiffeur :</b><button type="button" data-sel="all" class="'+(sel==='all'?'on':'')+'"><span class="av">★</span>Toute l\'équipe <small>(jour)</small></button>'+
+    t.map(x=>'<button type="button" data-sel="'+esc(x.id)+'" class="'+(sel===x.id?'on':'')+'">'+avatar(x)+esc(x.name)+' <small>'+cnt(x.id)+'</small></button>').join('')+tools;
+}
+function fillBarberSelect(){
+  $('abarberWrap').hidden=!team().length;
+  $('abarber').innerHTML=team().map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+}
+$('team').addEventListener('click',e=>{
+  if(e.target.closest('#addBarber'))return openAddBarber();
+  if(e.target.closest('#delBarber'))return openDelBarber();
+  if(e.target.closest('#editBarber'))return openEditBarber();
+  const b=e.target.closest('[data-sel]');if(!b)return;
+  sel=b.dataset.sel;if(sel==='all'&&view!=='day')view='day';
+  subscribe();
+});
+
+function subscribe(){
+  unsub.forEach(f=>f());unsub=[];
+  const r=range(),a=iso(r[0]),b=iso(r[r.length-1]);
+  const fail=()=>{showMsg('Impossible de lire les rendez-vous : vérifie que l\'e-mail de ce salon est le même dans salon.js, dans Authentication et dans les règles Firestore.')};
+  unsub.push(onSnapshot(query(col('bookings'),where('d','>=',a),where('d','<=',b)),snap=>{
+    bookings={};snap.docs.forEach(x=>bookings[x.id]={id:x.id,...x.data()});showMsg('');render();
+  },fail));
+  unsub.push(onSnapshot(query(col('slots'),where('d','>=',a),where('d','<=',b)),snap=>{
+    slots={};snap.docs.forEach(x=>slots[x.id]={id:x.id,...x.data()});render();
+  },fail));
+  render();
+}
+function showMsg(t){$('msg').textContent=t;$('msg').classList.toggle('on',!!t)}
+
+function render(){
+  const r=range(),now=new Date(),todayIso=iso(now);
+  // titre
+  if(view==='day'){const d=r[0];$('period').textContent=(iso(d)===todayIso?'Aujourd\'hui · ':'')+DAYS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]}
+  else{const a=r[0],b=r[r.length-1];$('period').textContent='Semaine du '+a.getDate()+(a.getMonth()!==b.getMonth()?' '+MONTHS[a.getMonth()]:'')+' au '+b.getDate()+' '+MONTHS[b.getMonth()]+' '+b.getFullYear()}
+  if(sel&&sel!=='all')$('period').textContent+=' · '+barberName(sel);
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  drawTeam();
+  const cols=columns();
+  // stats
+  const list=Object.values(bookings).filter(inView);
+  const active=list.filter(b=>b.status!=='absent');
+  const openCols=cols.filter(c=>works(c.b,c.d)).length;
+  const capacity=openCols*SLOTS.length;
+  const cont={};for(const b of list){idsOf(b).slice(1).forEach(k=>cont[k]=b.id)}
+  const blocked=Object.keys(slots).filter(k=>!bookings[k]&&!cont[k]&&(!team().length||sel==='all'||slotB(k)===sel)).length;
+  const used=list.reduce((n,b)=>n+idsOf(b).length,0);
+  const fill=capacity?Math.round(100*used/Math.max(1,capacity-blocked)):0;
+  const total=active.reduce((s,b)=>s+(svc(b.service).prix||0),0);
+  const upcoming=list.filter(b=>b.status==='ok'&&new Date(fromIso(b.d).setHours(+b.t.slice(0,2),+b.t.slice(3)))>now).sort((x,y)=>(x.d+x.t).localeCompare(y.d+y.t))[0];
+  const todayCount=list.filter(b=>b.d===todayIso).length;
+  $('stats').innerHTML=
+    '<div class="stat"><span>Rendez-vous '+(view==='day'?'ce jour':'cette semaine')+'</span><b>'+list.length+'</b><small>'+pl(list.filter(b=>b.status==='done').length,'venu')+' · '+pl(list.filter(b=>b.status==='absent').length,'absent')+'</small></div>'+
+    '<div class="stat"><span>Remplissage</span><b>'+Math.min(100,fill)+' %</b><small>'+blocked+' créneau'+(blocked>1?'x':'')+' bloqué'+(blocked>1?'s':'')+'</small></div>'+
+    '<div class="stat"><span>Chiffre estimé</span><b>'+euro(total)+'</b><small>sur la base des prix « à partir de »</small></div>'+
+    '<div class="stat"><span>Prochain client</span><b>'+(upcoming?esc(upcoming.t):'—')+'</b><small>'+(upcoming?esc(upcoming.name)+(upcoming.d!==todayIso?' · '+esc(longDate(upcoming.d)):''):(range().some(d=>iso(d)===todayIso)?todayCount+' RDV aujourd\'hui':'Aucun sur la période'))+'</small></div>';
+  // légende
+  $('legend').innerHTML=SERVICES.map(s=>'<span><i style="background:'+s.color+'"></i>'+esc(s.n)+'</span>').join('')+
+    '<span><i style="background:#effaf2;border-left:4px solid #16a34a"></i>Venu</span><span><i style="background:repeating-linear-gradient(45deg,#fff 0 3px,#f7c9ca 3px 6px)"></i>Absent</span><span><i style="background:repeating-linear-gradient(45deg,#ddd 0 3px,#f6f6f6 3px 6px)"></i>Bloqué</span>';
+  // grille
+  const cal=$('cal');cal.style.setProperty('--n',cols.length);
+  let h='<div class="ch" style="border-right:1px solid var(--line)"></div>';
+  for(const c of cols){
+    const k=iso(c.d),n=list.filter(b=>b.d===k&&(!c.b||b.barber===c.b.id)).length;
+    h+=sel==='all'
+      ?'<div class="ch'+(k===todayIso?' today':'')+'"><b>'+esc(c.b.name)+'</b><span>'+DAYS[c.d.getDay()]+'</span><em>'+n+' RDV</em></div>'
+      :'<div class="ch'+(k===todayIso?' today':'')+'"><b>'+DAYS[c.d.getDay()]+'</b><span>'+c.d.getDate()+' '+SHORT[c.d.getMonth()]+'</span><em>'+n+' RDV</em></div>';
+  }
+  const closedDay=cols.map(c=>!works(c.b,c.d));
+  SLOTS.forEach((t,ri)=>{
+    const isHour=t.endsWith(':00');
+    h+='<div class="tm'+(isHour?' h':'')+'">'+t+'</div>';
+    cols.forEach((col,ci)=>{
+      const d=col.d,bid=col.b&&col.b.id;
+      if(closedDay[ci]){if(ri===0)h+='<div class="closedcol" style="--rows:'+SLOTS.length+';grid-row:span '+SLOTS.length+'">'+offLabel(col.b,d)+'</div>';return}
+      const k=iso(d),id=sid(k,t,bid);
+      const st=new Date(d);st.setHours(+t.slice(0,2),+t.slice(3));const en=new Date(st.getTime()+30*60000);
+      const past=en<=now,isNow=st<=now&&now<en;
+      let cls='cell'+(isHour?'':' hour')+(past?' past':'')+(k===todayIso&&!past?' todaycol':'')+(isNow?' now':'');
+      const b=bookings[id],s=slots[id],c=cont[id]&&bookings[cont[id]];
+      let inner='';
+      if(c&&!b){const v=svc(c.service);inner='<button class="ev cont'+(c.status==='done'?' done':c.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(c.id)+'"><small>↳ suite · '+esc(c.name)+'</small></button>'}
+      else if(b){const v=svc(b.service);inner='<button class="ev'+(b.status==='done'?' done':b.status==='absent'?' absent':'')+(past?' past':'')+'" style="--c:'+v.color+'" data-b="'+esc(id)+'"><b>'+esc(b.name)+'</b><small>'+esc(v.n)+(b.phone?' · '+esc(b.phone):'')+'</small></button>'}
+      else if(s){inner='<button class="ev block" data-x="'+esc(id)+'"><b>Bloqué</b></button>'}
+      else if(!past){cls+=' free'}
+      h+='<div class="'+cls+'" data-d="'+k+'" data-t="'+t+'" data-bb="'+esc(bid||'')+'"'+(cls.includes('free')?' role="button" tabindex="0" aria-label="Créneau libre '+t+'"':'')+'>'+inner+'</div>';
+    });
+  });
+  cal.innerHTML=h;
+}
+
+/* navigation */
+$('prev').onclick=()=>{anchor=addDays(anchor,view==='day'?-1:-7);subscribe()};
+$('next').onclick=()=>{anchor=addDays(anchor,view==='day'?1:7);subscribe()};
+$('todayBtn').onclick=()=>{anchor=new Date();anchor.setHours(0,0,0,0);subscribe()};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{view=b.dataset.v;if(view==='week'&&sel==='all')sel=team()[0].id;subscribe()});
+document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||!$('app').classList.contains('on')||e.target.matches('input,textarea,select'))return;if(e.key==='ArrowLeft')$('prev').click();if(e.key==='ArrowRight')$('next').click()});
+setInterval(()=>{if($('app').classList.contains('on'))render()},60000);
+
+/* clics dans l'agenda */
+$('cal').addEventListener('click',e=>{
+  const ev=e.target.closest('[data-b]');if(ev)return openBooking(ev.dataset.b);
+  const bl=e.target.closest('[data-x]');if(bl)return openBlocked(bl.dataset.x);
+  const c=e.target.closest('.cell.free');if(c)openFree(c.dataset.d,c.dataset.t,c.dataset.bb||null);
+});
+$('cal').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('.cell.free'))openFree(e.target.dataset.d,e.target.dataset.t,e.target.dataset.bb||null)});
+
+function openBooking(id){
+  const b=bookings[id];if(!b)return;current=id;const v=svc(b.service);
+  $('dhead').style.setProperty('--c',v.color);
+  $('dname').textContent=b.name;$('dwhen').textContent=longDate(b.d)+' à '+b.t+(b.barber?' · avec '+barberName(b.barber):'');
+  const tel=String(b.phone||'').replace(/[^0-9+]/g,'');
+  $('dinfo').innerHTML=(b.barber?'<dt>Coiffeur</dt><dd>'+esc(barberName(b.barber))+'</dd>':'')+'<dt>Prestation</dt><dd>'+esc(v.n)+'</dd>'+
+    '<dt>Durée · prix</dt><dd>'+dur(v.dur||30)+' · '+esc(v.p||(v.prix?euro(v.prix):'—'))+'</dd>'+
+    '<dt>Téléphone</dt><dd>'+(b.phone?'<a href="tel:'+esc(tel)+'">'+esc(b.phone)+'</a>':'—')+'</dd>'+
+    '<dt>Rappel SMS</dt><dd>'+(b.reminded?(String(b.reminded).startsWith('20')?'envoyé le '+esc(new Date(b.reminded).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):esc(b.reminded)):'pas encore envoyé')+'</dd>'+
+    '<dt>Réservé le</dt><dd>'+(b.created?esc(new Date(b.created).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})):'—')+'</dd>';
+  $('dnote').value=b.note||'';$('derr').textContent='';
+  $('dcancel').textContent='Annuler le RDV';delete $('dcancel').dataset.armed;
+  setStatusUI(b.status||'ok');$('ddlg').showModal();
+}
+function setStatusUI(s){$('dstatus').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.s===s))}
+$('dstatus').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b||!current)return;
+  setStatusUI(b.dataset.s);
+  try{await updateDoc(ref('bookings',current),{status:b.dataset.s})}catch(_){$('derr').textContent='Le statut n\'a pas pu être enregistré.'}
+});
+let noteT;$('dnote').addEventListener('input',()=>{clearTimeout(noteT);const id=current,v=$('dnote').value;noteT=setTimeout(async()=>{try{await updateDoc(ref('bookings',id),{note:v})}catch(_){$('derr').textContent='La note n\'a pas pu être enregistrée.'}},700)});
+$('dclose').onclick=()=>$('ddlg').close();
+$('dcancel').onclick=async()=>{
+  const btn=$('dcancel');if(!btn.dataset.armed){btn.dataset.armed='1';btn.textContent='Confirmer l\'annulation';return}
+  btn.disabled=true;
+  try{const ids=idsOf(bookings[current]);await deleteDoc(ref('bookings',current));for(const k of ids)await deleteDoc(ref('slots',k));$('ddlg').close()}
+  catch(_){$('derr').textContent='L\'annulation a échoué, réessaie.'}
+  finally{btn.disabled=false}
+};
+
+function openBlocked(id){current=id;const s=slots[id];$('bwhen').textContent=longDate(s.d)+' à '+s.t+(slotB(id)?' · '+barberName(slotB(id)):'');$('berr').textContent='';$('bdlg').showModal()}
+$('bclose').onclick=()=>$('bdlg').close();
+$('bfree').onclick=async()=>{try{await deleteDoc(ref('slots',current));$('bdlg').close()}catch(_){$('berr').textContent='Impossible de débloquer, réessaie.'}};
+
+/* ajouter / bloquer */
+$('aserv').innerHTML=SERVICES.map(s=>'<option value="'+esc(s.n)+'">'+esc(s.n)+' ('+dur(s.dur||30)+')</option>').join('');
+$('atime').innerHTML=SLOTS.map(t=>'<option>'+t+'</option>').join('');
+$('atime').setAttribute('aria-label','Heure');
+function openFree(d,t,b){
+  b=b||(sel&&sel!=='all'?sel:(team()[0]||{}).id||null);
+  newSlot={d,t,b};$('adate').value=d;$('atime').value=t;if(b)$('abarber').value=b;
+  $('awhen').textContent=longDate(d)+' à '+t+(b?' · '+barberName(b):'');
+  ['aname','aphone','anote'].forEach(i=>$(i).value='');$('aerr').textContent='';
+  tab('rdv');$('adlg').showModal();$('aname').focus();
+}
+$('addBtn').onclick=()=>{
+  const r=range(),now=new Date();
+  for(const c of columns()){if(!works(c.b,c.d))continue;const bid=c.b&&c.b.id;for(const t of SLOTS){const id=sid(iso(c.d),t,bid);const st=new Date(c.d);st.setHours(+t.slice(0,2),+t.slice(3));if(st>now&&!slots[id])return openFree(iso(c.d),t,bid)}}
+  openFree(iso(r[0]),SLOTS[0],null);
+};
+function tab(n){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));
+  $('tabRdv').hidden=$('rowRdv').hidden=n!=='rdv';$('tabBlock').hidden=$('rowBlock').hidden=n!=='block';
+  $('aname').required=n==='rdv';
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+$('aclose').onclick=()=>$('adlg').close();
+$('aform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const d=$('adate').value,t=$('atime').value,name=$('aname').value.trim();
+  if(!d||!name){$('aerr').textContent='Indique au moins la date et le nom.';return}
+  const dd=fromIso(d);if(CLOSED_DAYS.includes(dd.getDay())){$('aerr').textContent='Le salon est fermé ce jour-là.';return}
+  const bid=team().length?$('abarber').value:null,bo=team().find(x=>x.id===bid);
+  if(bo&&!works(bo,dd)){$('aerr').textContent=bo.name+' ne travaille pas ce jour-là.';return}
+  const id=sid(d,t,bid),sv=svc($('aserv').value),n=slotsFor(sv),i0=SLOTS.indexOf(t);
+  if(i0+n>SLOTS.length){$('aerr').textContent='Pas assez de temps avant la fermeture pour cette prestation.';return}
+  const need=SLOTS.slice(i0,i0+n).map(x=>sid(d,x,bid));
+  if(need.some(k=>slots[k])){$('aerr').textContent=n>1?'Ce créneau ou le suivant est déjà pris ou bloqué ('+dur(sv.dur)+').':'Ce créneau est déjà pris ou bloqué.';return}
+  $('asave').disabled=true;
+  try{
+    const batch=writeBatch(db);
+    need.forEach((k,j)=>batch.set(ref('slots',k),{d,t:SLOTS[i0+j],taken:true}));
+    const data={d,t,name,phone:$('aphone').value.trim(),service:$('aserv').value,status:'ok',note:$('anote').value.trim(),created:new Date().toISOString()};
+    if(bid)data.barber=bid;
+    batch.set(ref('bookings',id),data);
+    await batch.commit();$('adlg').close();
+    anchor=dd;subscribe();
+  }catch(err){$('aerr').textContent=err&&err.code==='permission-denied'?'Ce créneau vient d\'être pris.':'L\'ajout a échoué, réessaie.'}
+  finally{$('asave').disabled=false}
+});
+async function block(ids){
+  const batch=writeBatch(db);let n=0;
+  for(const [d,t,b] of ids){const id=sid(d,t,b);if(slots[id])continue;batch.set(ref('slots',id),{d,t,taken:true,blocked:true});n++}
+  if(!n){$('aerr').textContent='Rien à bloquer : tout est déjà pris.';return}
+  try{await batch.commit();$('adlg').close()}catch(_){$('aerr').textContent='Le blocage a échoué, réessaie.'}
+}
+$('ablock1').onclick=()=>block([[newSlot.d,newSlot.t,newSlot.b]]);
+$('ablockday').onclick=()=>{
+  const btn=$('ablockday');if(!btn.dataset.armed){btn.dataset.armed='1';btn.textContent='Confirmer : bloquer la journée';return}
+  delete btn.dataset.armed;btn.textContent='Bloquer toute la journée';
+  const now=new Date();
+  block(SLOTS.filter(t=>{const st=fromIso(newSlot.d);st.setHours(+t.slice(0,2),+t.slice(3));return st>now}).map(t=>[newSlot.d,t,newSlot.b]));
+};
+/* ===== Gestion de l'équipe (protégée par le compte « gestion ») ===== */
+let mgr=null;
+function manager(){if(!mgr){const a=initializeApp(firebaseConfig,'gestion');mgr={auth:getAuth(a),db:getFirestore(a)}}return mgr}
+async function asManager(pw,fn){
+  const m=manager();
+  try{await signInWithEmailAndPassword(m.auth,MANAGER_EMAIL,pw)}catch(_){throw new Error('pw')}
+  try{return await fn(m.db)}finally{try{await signOut(m.auth)}catch(_){}}
+}
+const slug=n=>String(n).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16)||'coiffeur';
+let photoData=null;
+function openAddBarber(){
+  $('mshop').textContent=shop.name;$('mname').value='';$('mpass').value='';$('mphoto').value='';$('merr').textContent='';
+  photoData=null;$('mprev').textContent='?';
+  $('moff').querySelectorAll('input').forEach(c=>c.checked=false);
+  $('mdlg').showModal();$('mname').focus();
+}
+$('mclose').onclick=()=>$('mdlg').close();
+$('mphoto').addEventListener('change',async()=>{
+  const f=$('mphoto').files[0];photoData=null;$('mprev').textContent='?';if(!f)return;
+  try{
+    const img=await createImageBitmap(f);const S=200,c=document.createElement('canvas');c.width=c.height=S;
+    const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
+    c.getContext('2d').drawImage(img,(S-w)/2,(S-h)/2,w,h);
+    photoData=c.toDataURL('image/jpeg',0.82);
+    const im=new Image();im.alt='';im.src=photoData;$('mprev').textContent='';$('mprev').appendChild(im);
+  }catch(_){$('merr').textContent='Cette image n\'a pas pu être lue. Essaie une photo JPG ou PNG.'}
+});
+$('mform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const name=$('mname').value.trim();if(!name){$('merr').textContent='Le pseudo est obligatoire.';return}
+  if(team().some(b=>b.name.toLowerCase()===name.toLowerCase())){$('merr').textContent='Un coiffeur porte déjà ce pseudo.';return}
+  let id=slug(name),i=2;while(team().some(b=>b.id===id))id=slug(name).slice(0,14)+(i++);
+  const data={name,order:Date.now(),off:[...$('moff').querySelectorAll('input:checked')].map(c=>+c.value)};
+  if(photoData)data.photo=photoData;
+  $('msave').disabled=true;$('merr').textContent='';
+  try{await asManager($('mpass').value,mdb=>setDoc(doc(mdb,'shops',shop.id,'barbers',id),data));$('mdlg').close()}
+  catch(err){$('merr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'L\'ajout a échoué. Vérifie les règles Firestore et réessaie.'}
+  finally{$('msave').disabled=false;$('mpass').value=''}
+});
+
+function openDelBarber(){
+  $('xwho').innerHTML=team().map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+  if(sel&&sel!=='all')$('xwho').value=sel;
+  $('xpass').value='';$('xerr').textContent='';countUpcoming();$('xdlg').showModal();
+}
+async function countUpcoming(){
+  const id=$('xwho').value;$('xinfo').textContent='';
+  try{
+    const snap=await getDocs(query(col('bookings'),where('barber','==',id)));
+    const t=iso(new Date()),n=snap.docs.filter(d=>String(d.data().d)>=t).length;
+    if($('xwho').value===id)$('xinfo').textContent=n?'⚠️ '+barberName(id)+' a '+pl(n,'rendez-vous')+' à venir : '+(n>1?'ils seront supprimés':'il sera supprimé')+'. Pense à prévenir les clients.':barberName(id)+' n\'a aucun rendez-vous à venir.';
+  }catch(_){}
+}
+$('xwho').addEventListener('change',countUpcoming);
+$('xclose').onclick=()=>$('xdlg').close();
+$('xform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=$('xwho').value;if(!id)return;
+  $('xsave').disabled=true;$('xerr').textContent='';
+  try{
+    await asManager($('xpass').value,async mdb=>{
+      // 1) son agenda (RDV + créneaux), avec le compte du salon
+      const bk=await getDocs(query(col('bookings'),where('barber','==',id)));
+      const sl=(await getDocs(col('slots'))).docs.filter(d=>slotB(d.id)===id);
+      const refs=bk.docs.map(d=>d.ref).concat(sl.map(d=>d.ref));
+      for(let i=0;i<refs.length;i+=400){const b=writeBatch(db);refs.slice(i,i+400).forEach(r=>b.delete(r));await b.commit()}
+      // 2) le coiffeur lui-même, avec le compte gestion
+      await deleteDoc(doc(mdb,'shops',shop.id,'barbers',id));
+    });
+    $('xdlg').close();
+  }catch(err){$('xerr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'La suppression a échoué, réessaie.'}
+  finally{$('xsave').disabled=false;$('xpass').value=''}
+});
+/* ----- Modifier un coiffeur : jours de repos + congés ----- */
+let leaves=[];
+const frDate=k=>{const d=fromIso(k);return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()};
+function openEditBarber(){
+  $('eshop').textContent=shop.name;
+  $('ewho').innerHTML=team().map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+  if(sel&&sel!=='all')$('ewho').value=sel;
+  loadEdit();$('epass').value='';$('eerr').textContent='';$('efrom').value='';$('eto').value='';
+  $('edlg').showModal();
+}
+function loadEdit(){
+  const b=team().find(x=>x.id===$('ewho').value)||{};
+  $('eoff').querySelectorAll('input').forEach(c=>c.checked=(b.off||[]).includes(+c.value));
+  const t=iso(new Date());
+  leaves=(b.leave||[]).filter(r=>r&&r.from&&r.to&&r.to>=t).map(r=>({from:r.from,to:r.to}));
+  drawLeaves();
+}
+function drawLeaves(){
+  leaves.sort((a,b)=>a.from.localeCompare(b.from));
+  $('eleaves').innerHTML=leaves.length?leaves.map((r,i)=>'<li><span>'+(r.from===r.to?'le '+esc(frDate(r.from)):'du '+esc(frDate(r.from))+' au '+esc(frDate(r.to)))+'</span><button type="button" data-rm="'+i+'">Retirer</button></li>').join(''):'<li class="empty">Aucun congé prévu.</li>';
+  checkLeaves();
+}
+async function checkLeaves(){
+  // prévient s'il y a déjà des RDV pendant les congés ou les jours de repos choisis
+  $('ewarn').textContent='';
+  const id=$('ewho').value,b=team().find(x=>x.id===id);if(!b)return;
+  const off=[...$('eoff').querySelectorAll('input:checked')].map(c=>+c.value);
+  try{
+    const snap=await getDocs(query(col('bookings'),where('barber','==',id)));
+    const t=iso(new Date());
+    const hit=snap.docs.map(d=>d.data()).filter(r=>String(r.d)>=t&&!works({off,leave:leaves},fromIso(String(r.d))));
+    if($('ewho').value===id&&hit.length)$('ewarn').textContent='⚠️ '+b.name+' a déjà '+pl(hit.length,'rendez-vous')+' pendant ces jours (ex. '+longDate(String(hit[0].d))+' à '+hit[0].t+'). Ils restent dans l\'agenda : pense à les déplacer ou à prévenir les clients.';
+  }catch(_){}
+}
+$('ewho').addEventListener('change',loadEdit);
+$('eoff').addEventListener('change',checkLeaves);
+$('eleaves').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;leaves.splice(+b.dataset.rm,1);drawLeaves()});
+$('efrom').addEventListener('change',()=>{if(!$('eto').value||$('eto').value<$('efrom').value)$('eto').value=$('efrom').value});
+$('eaddLeave').onclick=()=>{
+  const f=$('efrom').value,t=$('eto').value||f;
+  if(!f){$('eerr').textContent='Choisis au moins la date de début.';return}
+  if(t<f){$('eerr').textContent='La date de fin est avant la date de début.';return}
+  if(t<iso(new Date())){$('eerr').textContent='Cette période est déjà passée.';return}
+  $('eerr').textContent='';leaves.push({from:f,to:t});$('efrom').value='';$('eto').value='';drawLeaves();
+};
+$('eclose').onclick=()=>$('edlg').close();
+$('eform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=$('ewho').value;if(!id)return;
+  if($('efrom').value){$('eaddLeave').click();if($('eerr').textContent)return}
+  const off=[...$('eoff').querySelectorAll('input:checked')].map(c=>+c.value);
+  $('esave').disabled=true;$('eerr').textContent='';
+  try{await asManager($('epass').value,mdb=>updateDoc(doc(mdb,'shops',shop.id,'barbers',id),{off,leave:leaves}));$('edlg').close()}
+  catch(err){$('eerr').textContent=err.message==='pw'?'Mot de passe gestion incorrect.':'L\'enregistrement a échoué. Vérifie que les nouvelles règles Firestore sont publiées.'}
+  finally{$('esave').disabled=false;$('epass').value=''}
+});
+</script>
+</body>
+</html>
